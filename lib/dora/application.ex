@@ -8,7 +8,8 @@ defmodule Dora.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      {Dora, []}
+      Dora.Repo,
+      Dora
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

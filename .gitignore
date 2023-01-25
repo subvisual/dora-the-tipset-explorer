@@ -24,3 +24,5 @@ dora-*.tar
 
 # Temporary files, for example, from tests.
 /tmp/
+
+addresses

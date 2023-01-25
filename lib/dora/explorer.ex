@@ -3,6 +3,7 @@ defmodule Dora.Explorer do
   use GenServer, restart: :transient
 
   alias Dora.Explorer.Filfox
+  alias Dora.EventHandler
 
   def start_link(args) do
     {:ok, pid} = GenServer.start_link(__MODULE__, args)
@@ -49,7 +50,7 @@ defmodule Dora.Explorer do
   def handle_info({:new_messages, messages}, state) do
     Enum.map(messages, &Filfox.message(&1["cid"]))
     |> List.flatten()
-    |> IO.inspect()
+    |> Enum.each(&EventHandler.new_event(state.address, &1))
 
     # Add retry to failed messages
 
