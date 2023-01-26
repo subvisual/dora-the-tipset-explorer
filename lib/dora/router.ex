@@ -5,9 +5,24 @@ defmodule Dora.Router do
   plug(:dispatch)
 
   get "/events/:type" do
+    filters = Plug.Conn.Query.decode(conn.query_string)
+
     body =
       type
-      |> Dora.Events.get_all_by_type()
+      |> Dora.Events.get_all_by_type(filters)
+      |> Jason.encode!()
+
+    conn
+    |> put_resp_content_type("application/json")
+    |> send_resp(200, body)
+  end
+
+  get "/projections/:type" do
+    filters = Plug.Conn.Query.decode(conn.query_string)
+
+    body =
+      type
+      |> Dora.EventProjections.get_all_by_type(filters)
       |> Jason.encode!()
 
     conn

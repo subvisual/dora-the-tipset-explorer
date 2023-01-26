@@ -50,9 +50,16 @@ defmodule Dora.Explorer do
   def handle_info({:new_messages, messages}, state) do
     Enum.map(messages, &Filfox.message(&1["cid"]))
     |> List.flatten()
-    |> Enum.each(&EventHandler.new_event(state.address, &1))
+    |> Enum.each(&handle_message_content(state.address, &1))
 
-    # Add retry to failed messages
+    {:noreply, state}
+  end
+
+  @impl true
+  def handle_info({:retry_message, message_cid}, state) do
+    Filfox.message(message_cid)
+    |> List.flatten()
+    |> Enum.each(&handle_message_content(state.address, &1))
 
     {:noreply, state}
   end
@@ -60,4 +67,12 @@ defmodule Dora.Explorer do
   defp filter_message?(message, last_timestamp) do
     message["method"] != "CreateExternal" && message["timestamp"] > last_timestamp
   end
+
+  def handle_message_content(_address, %{error: message_cid}) do
+    Logger.warning("Retrying message: #{message_cid}")
+    send(self(), {:retry_message, message_cid})
+  end
+
+  def handle_message_content(address, message),
+    do: EventHandler.new_event(address, message)
 end

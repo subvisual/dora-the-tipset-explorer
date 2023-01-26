@@ -22,6 +22,7 @@ defmodule Dora.Explorer.Filfox do
 
   defp handle_messages(_, address) do
     Logger.error("Error requesting messages for address: #{address}")
+    []
   end
 
   defp handle_message({:ok, %Tesla.Env{status: 200, body: body}}, _cid) do
@@ -30,6 +31,6 @@ defmodule Dora.Explorer.Filfox do
 
   defp handle_message(_, message_cid) do
     Logger.error("Error requesting message cid: #{message_cid}")
-    []
+    [%{error: message_cid}]
   end
 end

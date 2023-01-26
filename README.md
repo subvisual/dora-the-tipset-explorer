@@ -1,6 +1,6 @@
 # Dora, the TipsetExplorer
 
-**TODO: Add description**
+This a project part of the [Space Warp hackathon by ETHGlobal](https://ethglobal.com/events/spacewarp).
 
 ## Installation
 

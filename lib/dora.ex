@@ -34,6 +34,11 @@ defmodule Dora do
   end
 
   def stop_explorer_instance(address) do
+    pause_explorer_instance(address)
+    :dets.delete(:addresses, address)
+  end
+
+  def pause_explorer_instance(address) do
     with {:ok, pid} <- get_pid_explorer_instance(address) do
       Explorer.stop(pid)
 

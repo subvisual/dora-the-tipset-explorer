@@ -5,6 +5,7 @@ defmodule Dora.Schema.EventProjection do
 
   @fields [:contract_address, :projection_type, :projection_id, :projection_fields]
 
+  @derive {Jason.Encoder, only: [:contract_address, :projection_fields, :projection_id]}
   @primary_key {:id, :binary_id, autogenerate: true}
   schema "event_projections" do
     field(:contract_address, :string)

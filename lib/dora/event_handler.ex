@@ -1,6 +1,4 @@
 defmodule Dora.EventHandler do
-  # import Ecto.Query
-
   def new_event(contract_address, event) do
     [_name, event_type, _rest] = Regex.run(~r/(\w+)(\(.+\))/, event["name"])
 
