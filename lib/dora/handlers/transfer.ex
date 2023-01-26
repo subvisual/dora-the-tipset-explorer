@@ -16,7 +16,7 @@ defmodule Dora.Handlers.Transfer do
     Repo.transaction(fn ->
       %Event{}
       |> Event.changeset(%{
-        event_type: "Transfer",
+        event_type: "transfer",
         contract_address: address,
         event_args: transfer
       })
@@ -38,9 +38,7 @@ defmodule Dora.Handlers.Transfer do
         projection -> projection
       end
       |> EventProjection.changeset(projection_changes)
-      |> IO.inspect(label: ":before")
       |> Repo.insert_or_update()
-      |> IO.inspect()
     end)
   end
 end

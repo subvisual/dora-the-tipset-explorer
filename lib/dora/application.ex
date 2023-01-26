@@ -8,6 +8,7 @@ defmodule Dora.Application do
   @impl true
   def start(_type, _args) do
     children = [
+      {Plug.Cowboy, scheme: :http, plug: Dora.Router, options: [port: 3000]},
       Dora.Repo,
       Dora
     ]

@@ -4,18 +4,10 @@
 
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `dora` to your list of dependencies in `mix.exs`:
+Run `bin/setup` to install the necessary dependencies for the project to work. It will also setup you up with a Postgres Database. 
 
-```elixir
-def deps do
-  [
-    {:dora, "~> 0.1.0"}
-  ]
-end
-```
+After the setup, just do `bin/server` and you should be good to go!
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at <https://hexdocs.pm/dora>.
+Type `Dora.start_explorer_instance("0x1234")`, with a valid address, to start exploring it.
 
+**NOTE**: the file `addresses` keeps track of the messages that it has indexed already, by smart contract. This way, if you stop and re-run the server, it will resume from where it stopped, and not from the begining (if you want to replay stuff, just delete the file entirely -> a new one is created automatically).

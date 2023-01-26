@@ -26,7 +26,8 @@ defmodule Dora.MixProject do
       {:hackney, "~> 1.17"},
       {:jason, ">= 1.0.0"},
       {:ecto_sql, "~> 3.0"},
-      {:postgrex, ">= 0.0.0"}
+      {:postgrex, ">= 0.0.0"},
+      {:plug_cowboy, "~> 2.0"}
     ]
   end
 end
