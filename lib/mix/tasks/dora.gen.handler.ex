@@ -4,16 +4,13 @@ defmodule Mix.Tasks.Dora.Gen.Handler do
   require Logger
   use Mix.Task
 
-  # @switches [migration: :boolean, binary_id: :boolean, table: :string,
-  # web: :string, context_app: :string, prefix: :string]
-  @switches [contract: :string, address: :string]
+  alias Mix.Tasks.Utils
 
   @template_path "priv/templates/dora.gen.handler/handler.ex"
   @base_output_path "lib/dora/handlers"
+  @dispatcher_path "lib/dora/event_dispatcher.ex"
 
   def run([module | _rest] = args) do
-    IO.inspect(args)
-
     type = Macro.underscore(module)
     prefix = if is_contract?(args), do: "Contracts", else: "Defaults"
 
@@ -25,7 +22,11 @@ defmodule Mix.Tasks.Dora.Gen.Handler do
       file_output: "#{@base_output_path}/#{String.downcase(prefix)}/#{type}.ex"
     ]
 
-    Mix.Generator.copy_template(@template_path, template_data[:file_output], template_data)
+    # Mix.Generator.copy_template(@template_path, template_data[:file_output], template_data)
+
+    # Utils.inject_eex_before_final_end("\t # Injected comment at the end \n", @dispatcher_path, [])
+
+    Utils.parse_abi("lib/mix/tasks/erc20.json")
 
     IO.puts("Event #{args} generated")
   end

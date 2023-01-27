@@ -9,7 +9,7 @@ defmodule Dora.EventProjections do
     |> where(projection_type: ^type)
     |> custom_filter(projection_id: filters["id"])
     |> custom_filter(address: filters["contract_address"])
-    |> custom_filter(owner: filters["from"])
+    |> custom_filter(owner: filters["owner"])
     |> Repo.all()
   end
 
@@ -22,7 +22,7 @@ defmodule Dora.EventProjections do
   end
 
   defp custom_filter(query, owner: owner) when not is_nil(owner) do
-    where(query, [event], event.event_args["owner"] == ^owner)
+    where(query, [projection], projection.projection_fields["owner"] == ^owner)
   end
 
   defp custom_filter(query, _), do: query

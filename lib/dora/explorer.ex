@@ -3,7 +3,7 @@ defmodule Dora.Explorer do
   use GenServer, restart: :transient
 
   alias Dora.Explorer.Filfox
-  alias Dora.EventHandler
+  alias Dora.EventDispatcher
 
   def start_link(args) do
     {:ok, pid} = GenServer.start_link(__MODULE__, args)
@@ -74,5 +74,5 @@ defmodule Dora.Explorer do
   end
 
   def handle_message_content(address, message),
-    do: EventHandler.dispatch(address, message)
+    do: EventDispatcher.dispatch(address, message)
 end
