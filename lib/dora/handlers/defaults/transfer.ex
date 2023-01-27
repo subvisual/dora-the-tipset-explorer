@@ -1,4 +1,4 @@
-defmodule Dora.Handlers.Transfer do
+defmodule Dora.Handlers.Defaults.Transfer do
   require Logger
 
   alias Dora.Repo

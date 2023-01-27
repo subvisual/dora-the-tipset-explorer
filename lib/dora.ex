@@ -25,7 +25,6 @@ defmodule Dora do
         [{_key, value}] -> %{address: address, last_timestamp: value}
       end
 
-    stop_explorer_instance(address)
     spec = {Explorer, state}
 
     with {:error, error} <- DynamicSupervisor.start_child(__MODULE__, spec) do

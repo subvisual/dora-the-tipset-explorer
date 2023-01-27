@@ -74,5 +74,5 @@ defmodule Dora.Explorer do
   end
 
   def handle_message_content(address, message),
-    do: EventHandler.new_event(address, message)
+    do: EventHandler.dispatch(address, message)
 end
