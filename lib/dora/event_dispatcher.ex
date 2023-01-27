@@ -16,5 +16,5 @@ defmodule Dora.EventDispatcher do
     Dora.Handlers.Defaults.Transfer.apply(address, event)
   end
 
-  # Injected comment at the end 
+  def handle(_type, _address, _event), do: :ok
 end
