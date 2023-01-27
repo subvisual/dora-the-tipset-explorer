@@ -6,8 +6,12 @@ defmodule Dora.<%= @module_prefix %>.<%= @module_name %> do
   alias Dora.Handlers.Utils
 
   def apply(address, %{"topics" => args}) do
-    <%= @event_type %> = %{}
-
+    <%= if is_nil(@abi) do %><%= @event_type %> = %{}
+    <% else %><%= @event_type %> = %{
+      <%= for event <- @abi[@module_name] || [] do %><%= event.name %>: <%= inspect event.type %>,
+      <% end %>
+    }
+    <% end %>
     Repo.transaction(fn ->
       %Event{}
       |> Event.changeset(%{

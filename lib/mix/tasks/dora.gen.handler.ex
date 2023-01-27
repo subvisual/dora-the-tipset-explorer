@@ -9,31 +9,43 @@ defmodule Mix.Tasks.Dora.Gen.Handler do
   @template_path "priv/templates/dora.gen.handler/handler.ex"
   @base_output_path "lib/dora/handlers"
   @dispatcher_path "lib/dora/event_dispatcher.ex"
+  @contract_regex ~r/contract:([\w, \d]+)/
+  @abi_regex ~r/abi:([\w, \d, _, \s, -, \+, \., \/]+.json)/
 
   def run([module | _rest] = args) do
     type = Macro.underscore(module)
-    prefix = if is_contract?(args), do: "Contracts", else: "Defaults"
+    is_contract = is_contract?(args)
+    prefix = if is_contract, do: "Contracts", else: "Defaults"
+    address = if is_contract, do: get_contract_address(args), else: nil
+
+    abi =
+      get_abi_path(args)
+      |> Utils.parse_abi()
 
     template_data = [
       module_name: module,
       event_type: type,
-      contract: is_contract?(args),
+      address: address,
       module_prefix: prefix,
-      file_output: "#{@base_output_path}/#{String.downcase(prefix)}/#{type}.ex"
+      file_output: "#{@base_output_path}/#{String.downcase(prefix)}/#{type}.ex",
+      abi: abi
     ]
 
-    # Mix.Generator.copy_template(@template_path, template_data[:file_output], template_data)
+    Mix.Generator.copy_template(@template_path, template_data[:file_output], template_data)
 
     # Utils.inject_eex_before_final_end("\t # Injected comment at the end \n", @dispatcher_path, [])
 
-    Utils.parse_abi("lib/mix/tasks/erc20.json")
+    IO.puts("""
+    Handler #{module} generated!
 
-    IO.puts("Event #{args} generated")
+    Don't forget to check all generated and touched files.
+    They may require some changes for your needs.
+    """)
   end
 
   def run(args) do
     Logger.error("""
-    Invalid #{inspect(args)}.
+    Invalid args: #{inspect(args)}.
     Expected at least the Contract/Event name, in camel case. Example:
 
     $ mix dora.gen.handler TransferNft
@@ -41,6 +53,27 @@ defmodule Mix.Tasks.Dora.Gen.Handler do
   end
 
   defp is_contract?(args) do
-    Enum.any?(args, &String.match?(&1, ~r/contract:[\w, \d]+/))
+    Enum.any?(args, &String.match?(&1, @contract_regex))
+  end
+
+  defp get_contract_address(args) do
+    [_contract, address] =
+      Enum.filter(args, &String.match?(&1, @contract_regex))
+      |> hd()
+      |> String.split(":")
+
+    address
+  end
+
+  defp get_abi_path(args) do
+    Enum.filter(args, &String.match?(&1, @abi_regex))
+    |> case do
+      [] ->
+        nil
+
+      [match] ->
+        [_abi, path] = String.split(match, ":")
+        path
+    end
   end
 end

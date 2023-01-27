@@ -1,7 +1,9 @@
 defmodule Mix.Tasks.Utils do
-  def parse_abi(abi_path) do
-    IO.inspect(abi_path)
+  require Logger
 
+  def parse_abi(nil), do: nil
+
+  def parse_abi(abi_path) do
     abi =
       abi_path
       |> File.read!()
@@ -17,8 +19,16 @@ defmodule Mix.Tasks.Utils do
       end
     end)
     |> IO.inspect()
+  rescue
+    error ->
+      Logger.error("""
+      Have you checked if the file exists?
+
+      #{inspect(error)}
+      """)
   end
 
+  # TODO: Update this to inject before default handler and not last end
   def inject_eex_before_final_end(content_to_inject, file_path, binding) do
     file = File.read!(file_path)
 
