@@ -5,19 +5,18 @@ defmodule Dora.Handlers.Defaults.Transfer do
   alias Dora.Schema.{Event, EventProjection}
   alias Dora.Handlers.Utils
 
-  # Ignore first element from the array because it doesn't
-  # correspond to the Event parameters, comming from Filfox API.
-  def apply(address, %{"topics" => [_id | args]}) do
-    new_owner = Utils.hex_string_to_eth_address(Enum.at(args, 1))
+  # Ignore first element from the array because it
+  # corresponds to the Event hash
+  def apply(address, %{"topics" => [_event_hash | args]}) do
+    new_owner = Utils.hex_to_eth_address(Enum.at(args, 1))
 
     id =
       args
       |> Enum.at(2)
-      |> Utils.hex_string_to_integer()
-      |> Integer.to_string()
+      |> Utils.hex_to_integer_string()
 
     transfer = %{
-      from: Utils.hex_string_to_eth_address(Enum.at(args, 0)),
+      from: Utils.hex_to_eth_address(Enum.at(args, 0)),
       to: new_owner,
       id: id
     }

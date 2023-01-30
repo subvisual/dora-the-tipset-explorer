@@ -8,7 +8,6 @@ defmodule Mix.Tasks.Dora.Gen.Handler do
 
   @template_path "priv/templates/dora.gen.handler/handler.ex"
   @base_output_path "lib/dora/handlers"
-  @dispatcher_path "lib/dora/event_dispatcher.ex"
   @contract_regex ~r/contract:([\w, \d]+)/
   @abi_regex ~r/abi:([\w, \d, _, \s, -, \+, \., \/]+.json)/
 
@@ -28,27 +27,47 @@ defmodule Mix.Tasks.Dora.Gen.Handler do
       address: address,
       module_prefix: prefix,
       file_output: "#{@base_output_path}/#{String.downcase(prefix)}/#{type}.ex",
-      abi: abi
+      abi: abi,
+      utils: Utils
     ]
 
     Mix.Generator.copy_template(@template_path, template_data[:file_output], template_data)
 
-    # Utils.inject_eex_before_final_end("\t # Injected comment at the end \n", @dispatcher_path, [])
+    Enum.each(abi, fn {event_name, _args} ->
+      Utils.insert_new_dispatcher_handler(module, Macro.underscore(event_name), address)
+    end)
 
     IO.puts("""
+
+    -------
+
     Handler #{module} generated!
 
     Don't forget to check all generated and touched files.
     They may require some changes for your needs.
+
+    You may also want to take a look at:
+
+     - lib/dora/events.ex
+     - lib/dora/event_projections.ex
+
+    These files are where API related things are handled.
+    If you need more filters, add them there, respectively.
     """)
   end
 
   def run(args) do
     Logger.error("""
     Invalid args: #{inspect(args)}.
-    Expected at least the Contract/Event name, in camel case. Example:
+    Expected at least the Contract/Event name, in camel case, and the ABI path.
 
-    $ mix dora.gen.handler TransferNft
+    -------
+
+    Example for a catch all Event type handler:
+    $ mix dora.gen.handler Transfer abi:some_path/erc20.json
+
+    Example for a contract specific handler:
+    $ mix dora.gen.handler ERC20 contractL:0x1234 abi:some_path/erc20.json
     """)
   end
 
@@ -62,14 +81,14 @@ defmodule Mix.Tasks.Dora.Gen.Handler do
       |> hd()
       |> String.split(":")
 
-    address
+    String.downcase(address)
   end
 
   defp get_abi_path(args) do
     Enum.filter(args, &String.match?(&1, @abi_regex))
     |> case do
       [] ->
-        nil
+        raise "There should be an ABI file. You can pass one using abi:path/to/file.json"
 
       [match] ->
         [_abi, path] = String.split(match, ":")

@@ -1,6 +1,8 @@
 defmodule Mix.Tasks.Utils do
   require Logger
 
+  @event_dispatcher_path "lib/dora/event_dispatcher.ex"
+
   def parse_abi(nil), do: nil
 
   def parse_abi(abi_path) do
@@ -18,7 +20,6 @@ defmodule Mix.Tasks.Utils do
         acc
       end
     end)
-    |> IO.inspect()
   rescue
     error ->
       Logger.error("""
@@ -28,8 +29,44 @@ defmodule Mix.Tasks.Utils do
       """)
   end
 
+  def template_parse_abi_field(event, position) do
+    case event.type do
+      "address" -> "Utils.hex_to_eth_address(Enum.at(args, #{position}))"
+      "string" -> "Utils.hex_to_string(Enum.at(args, #{position}))"
+      "uint256" -> "Utils.hex_to_integer_string(Enum.at(args, #{position}))"
+    end
+  end
+
+  def insert_new_dispatcher_handler(module, event_name, nil) do
+    content_to_replace = "def handle(_type, _address, _event), do: :ok\n"
+
+    content_to_inject =
+      """
+      def handle("#{event_name}", address, event) do
+          Dora.Handlers.Defaults.#{module}.apply(address, event)
+        end
+
+      """ <> "  #{content_to_replace}"
+
+    inject_eex_in_place(content_to_replace, content_to_inject, @event_dispatcher_path)
+  end
+
+  def insert_new_dispatcher_handler(module, event_name, contract_address) do
+    content_to_replace = "|> handle(contract_address, event)\n  end\n"
+
+    content_to_inject =
+      "#{content_to_replace} \n" <>
+        """
+          def handle("#{event_name}", "#{contract_address}", event) do
+            Dora.Handlers.Contracts.#{module}.apply("#{event_name}", "#{contract_address}", event)
+          end
+        """
+
+    inject_eex_in_place(content_to_replace, content_to_inject, @event_dispatcher_path)
+  end
+
   # TODO: Update this to inject before default handler and not last end
-  def inject_eex_before_final_end(content_to_inject, file_path, binding) do
+  def inject_eex_in_place(content_to_replace, content_to_inject, file_path) do
     file = File.read!(file_path)
 
     if String.contains?(file, content_to_inject) do
@@ -38,11 +75,7 @@ defmodule Mix.Tasks.Utils do
       Mix.shell().info([:green, "* injecting ", :reset, Path.relative_to_cwd(file_path)])
 
       file
-      |> String.trim_trailing()
-      |> String.trim_trailing("end")
-      |> EEx.eval_string(binding)
-      |> Kernel.<>(content_to_inject)
-      |> Kernel.<>("end\n")
+      |> String.replace(content_to_replace, content_to_inject)
       |> write_file(file_path)
     end
   end

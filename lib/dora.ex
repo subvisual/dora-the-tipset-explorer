@@ -18,11 +18,14 @@ defmodule Dora do
     end
   end
 
-  def start_explorer_instance(address) do
+  def start_explorer_instance(address, abi_path) do
+    address = String.downcase(address)
+    base_state = %{address: address, abi_path: abi_path}
+
     state =
       case :dets.lookup(:addresses, address) do
-        [] -> %{address: address}
-        [{_key, value}] -> %{address: address, last_timestamp: value}
+        [] -> base_state
+        [{_key, timestamp, _}] -> Map.put(base_state, :last_timestamp, timestamp)
       end
 
     spec = {Explorer, state}
@@ -70,9 +73,9 @@ defmodule Dora do
       :ets.new(:address_instances, [:set, :public, :named_table])
     end
 
-    :dets.match_object(:addresses, {:_, :_})
-    |> Enum.each(fn {address, _pid} ->
-      start_explorer_instance(address)
+    :dets.match_object(:addresses, {:_, :_, :_})
+    |> Enum.each(fn {address, _timestamp, abi_path} ->
+      start_explorer_instance(address, abi_path)
     end)
   end
 end

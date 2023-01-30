@@ -21,7 +21,11 @@ defmodule Dora.Explorer do
 
   @impl true
   def init(init_arg) do
-    new_state = Map.put_new(init_arg, :last_timestamp, 0)
+    new_state =
+      init_arg
+      |> Map.put_new(:last_timestamp, 0)
+      |> Map.put_new(:abi, abi_specification(init_arg.abi_path))
+
     {:ok, new_state}
   end
 
@@ -36,7 +40,7 @@ defmodule Dora.Explorer do
 
     new_state =
       if messages != [] do
-        :dets.insert(:addresses, {state.address, hd(messages)["timestamp"]})
+        :dets.insert(:addresses, {state.address, hd(messages)["timestamp"], state.abi_path})
 
         Map.put(state, :last_timestamp, hd(messages)["timestamp"])
       else
@@ -75,4 +79,19 @@ defmodule Dora.Explorer do
 
   def handle_message_content(address, message),
     do: EventDispatcher.dispatch(address, message)
+
+  defp abi_specification(abi_path) do
+    abi_json =
+      abi_path
+      |> File.read!()
+      |> Jason.decode()
+
+    with {:ok, specification} <- abi_json do
+      specification["abi"] ||
+        specification["output"]["abi"]
+        |> ABI.parse_specification(include_events?: true)
+    else
+      {:error, error} -> Logger.error("Error building ABI spec: #{inspect(error)}")
+    end
+  end
 end
