@@ -14,4 +14,11 @@ defmodule Dora.Handlers.Utils do
   def hex_to_string("0x" <> value) do
     Base.decode16!(value, case: :mixed)
   end
+
+  def hex_to_string(nil), do: nil
+
+  def pad_data_string("0x" <> data) do
+    String.pad_leading(data, 64, "0")
+    |> Base.decode16!(case: :mixed)
+  end
 end

@@ -11,7 +11,9 @@ defmodule Mix.Tasks.Utils do
       |> File.read!()
       |> Jason.decode!()
 
-    Enum.reduce(abi["output"]["abi"], %{}, fn entry, acc ->
+    specification = abi["output"]["abi"] || abi["abi"]
+
+    Enum.reduce(specification, %{}, fn entry, acc ->
       if entry["type"] == "event" do
         inputs = Enum.map(entry["inputs"], &%{name: &1["name"], type: &1["type"]})
 
