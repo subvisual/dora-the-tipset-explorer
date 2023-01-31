@@ -31,16 +31,8 @@ defmodule Mix.Tasks.Utils do
       """)
   end
 
-  def template_parse_abi_field(event, position) do
-    case event.type do
-      "address" -> "Utils.hex_to_eth_address(Enum.at(args, #{position}))"
-      "string" -> "Utils.hex_to_string(Enum.at(args, #{position}))"
-      "uint256" -> "Utils.hex_to_integer_string(Enum.at(args, #{position}))"
-    end
-  end
-
   def insert_new_dispatcher_handler(module, event_name, nil) do
-    content_to_replace = "def handle(_type, _address, _event), do: :ok\n"
+    content_to_replace = "def handle(type, address, _event) do\n"
 
     content_to_inject =
       """
@@ -54,7 +46,7 @@ defmodule Mix.Tasks.Utils do
   end
 
   def insert_new_dispatcher_handler(module, event_name, contract_address) do
-    content_to_replace = "|> handle(contract_address, event)\n  end\n"
+    content_to_replace = "|> handle(contract_address, {abi_selector, decoded_event})\n  end\n"
 
     content_to_inject =
       "#{content_to_replace} \n" <>

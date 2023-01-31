@@ -5,18 +5,14 @@ defmodule Dora.Handlers.Defaults.Transfer do
   alias Dora.Schema.{Event, EventProjection}
   alias Dora.Handlers.Utils
 
-  # Ignore first element from the array because it
-  # corresponds to the Event hash
-  def apply(address, %{"topics" => [_event_hash | args]}) do
-    new_owner = Utils.hex_to_eth_address(Enum.at(args, 1))
+  def apply(address, {_function, topics}) do
+    topics_map = Utils.build_topics_maps(topics)
 
-    id =
-      args
-      |> Enum.at(2)
-      |> Utils.hex_to_integer_string()
+    new_owner = topics_map["to"]
+    id = topics_map["tokenId"]
 
     transfer = %{
-      from: Utils.hex_to_eth_address(Enum.at(args, 0)),
+      from: topics_map["from"],
       to: new_owner,
       id: id
     }

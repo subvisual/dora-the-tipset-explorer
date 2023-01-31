@@ -11,7 +11,7 @@ defmodule Dora.Explorer do
 
     Dora.insert_instance_in_ets(args.address, pid)
     send(pid, :start)
-    Logger.info("Indexing #{args.address}")
+    Logger.info("Indexing #{args.address}. Last Timestamp: #{Map.get(args, :last_timestamp, 0)}.")
 
     {:ok, pid}
   end
@@ -83,16 +83,17 @@ defmodule Dora.Explorer do
   defp handle_message_content(state, message) do
     topics = message["topics"]
 
-    ABI.Event.find_and_decode(
-      state.abi,
-      Utils.hex_to_string(Enum.at(topics, 0)),
-      Utils.hex_to_string(Enum.at(topics, 1)),
-      Utils.hex_to_string(Enum.at(topics, 2)),
-      Utils.hex_to_string(Enum.at(topics, 3)),
-      Utils.pad_data_string(message["data"])
-    )
+    decoded_event =
+      ABI.Event.find_and_decode(
+        state.abi,
+        Utils.hex_to_string(Enum.at(topics, 0)),
+        Utils.hex_to_string(Enum.at(topics, 1)),
+        Utils.hex_to_string(Enum.at(topics, 2)),
+        Utils.hex_to_string(Enum.at(topics, 3)),
+        Utils.pad_data_string(message["data"])
+      )
 
-    EventDispatcher.dispatch(state.address, message)
+    EventDispatcher.dispatch(state.address, decoded_event)
   end
 
   defp abi_specification(abi_path) do

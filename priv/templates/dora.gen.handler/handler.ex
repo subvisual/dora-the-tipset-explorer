@@ -35,13 +35,12 @@ defmodule Dora.Handlers.<%= @module_prefix %>.<%= @module_name %> do
   #    `Dora.start_explorer_instance(SOME_ADDRESS, ABI_PATH)`
   #
   # - Many other things.
-
-  # Ignore first element from the array because it
-  # corresponds to the Event hash
   <%= for {type, args} <- @abi do %>
-  def apply(<%= if not is_nil(@address), do: "#{inspect Macro.underscore(type)}, "  %>address, %{"topics" => [_event_hash | args]}) do
+  def apply(<%= if not is_nil(@address), do: "#{inspect Macro.underscore(type)}, "  %>address, {_function, topics}) do
+    topics_map = Utils.build_topics_maps(topics)
+
     <%= Macro.underscore(type) %> = %{
-      <%= for {field, i} <- Enum.with_index(args) do %><%= Macro.underscore(field.name) %>: <%= @utils.template_parse_abi_field(field, i) %><%= if i + 1 != length(args), do: ",", else: "\n    }" %>
+      <%= for {field, i} <- Enum.with_index(args) do %><%= Macro.underscore(field.name) %>: topics_map["<%= field.name %>"]<%= if i + 1 != length(args), do: ",", else: "\n    }" %>
       <% end %>
     Repo.transaction(fn ->
       # This will create a new DB entry with for this event

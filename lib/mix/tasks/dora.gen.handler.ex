@@ -21,14 +21,20 @@ defmodule Mix.Tasks.Dora.Gen.Handler do
       get_abi_path(args)
       |> Utils.parse_abi()
 
+    abi =
+      if not is_contract do
+        Enum.filter(abi, fn {key, _value} -> key == module end)
+      else
+        abi
+      end
+
     template_data = [
       module_name: module,
       event_type: type,
       address: address,
       module_prefix: prefix,
       file_output: "#{@base_output_path}/#{String.downcase(prefix)}/#{type}.ex",
-      abi: abi,
-      utils: Utils
+      abi: abi
     ]
 
     Mix.Generator.copy_template(@template_path, template_data[:file_output], template_data)

@@ -1,10 +1,12 @@
 defmodule Dora.EventDispatcher do
-  def dispatch(contract_address, event) do
-    [_name, event_type, _rest] = Regex.run(~r/(\w+)(\(.*\))/, event["name"])
+  require Logger
+
+  def dispatch(contract_address, {abi_selector, decoded_event}) do
+    event_type = abi_selector.function
 
     event_type
     |> Macro.underscore()
-    |> handle(contract_address, event)
+    |> handle(contract_address, {abi_selector, decoded_event})
   end
 
   # If we want to deal with the event without worrying on the address
@@ -13,5 +15,7 @@ defmodule Dora.EventDispatcher do
     Dora.Handlers.Defaults.Transfer.apply(address, event)
   end
 
-  def handle(_type, _address, _event), do: :ok
+  def handle(type, address, _event) do
+    Logger.warning("Ignoring event #{type} from #{address}.")
+  end
 end
