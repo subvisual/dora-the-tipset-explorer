@@ -2,7 +2,8 @@ defmodule Dora.Handlers.<%= @module_prefix %>.<%= @module_name %> do
   require Logger
 
   alias Dora.Repo
-  alias Dora.Schema.{Event, EventProjection}
+  alias Dora.Events
+  alias Dora.Projections.EventProjection
   alias Dora.Handlers.Utils
 
   # What other things can you do inside an handler, and not generated here?
@@ -44,13 +45,11 @@ defmodule Dora.Handlers.<%= @module_prefix %>.<%= @module_name %> do
       <% end %>
     Repo.transaction(fn ->
       # This will create a new DB entry with for this event
-      %Event{}
-      |> Event.changeset(%{
+      Events.create_event(%{
         event_type: "<%= Macro.underscore(type) %>",
         contract_address: address,
         event_args: <%= Macro.underscore(type) %>
       })
-      |> Repo.insert()
 
       # Other code you may want to add inside the Transaction
       # Check the comment block on top

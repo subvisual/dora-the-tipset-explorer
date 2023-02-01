@@ -8,8 +8,10 @@ defmodule Dora.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      {Plug.Cowboy, scheme: :http, plug: Dora.Router, options: [port: 3000]},
       Dora.Repo,
+      DoraWeb.Telemetry,
+      {Phoenix.PubSub, name: Dora.PubSub},
+      DoraWeb.Endpoint,
       Dora
     ]
 
@@ -17,5 +19,13 @@ defmodule Dora.Application do
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: Dora.Supervisor]
     Supervisor.start_link(children, opts)
+  end
+
+  # Tell Phoenix to update the endpoint configuration
+  # whenever the application is updated.
+  @impl true
+  def config_change(changed, _new, removed) do
+    DoraWeb.Endpoint.config_change(changed, removed)
+    :ok
   end
 end

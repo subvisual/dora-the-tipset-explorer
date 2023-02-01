@@ -4,4 +4,4 @@ set -e
 . "./bin/functions"
 test -f .envrc && . "./.envrc"
 
-iex -S mix
+iex -S mix phx.server

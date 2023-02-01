@@ -2,7 +2,8 @@ defmodule Dora.Handlers.Defaults.Transfer do
   require Logger
 
   alias Dora.Repo
-  alias Dora.Schema.{Event, EventProjection}
+  alias Dora.Events
+  alias Dora.Projections.EventProjection
   alias Dora.Handlers.Utils
 
   def apply(address, {_function, topics}) do
@@ -18,13 +19,11 @@ defmodule Dora.Handlers.Defaults.Transfer do
     }
 
     Repo.transaction(fn ->
-      %Event{}
-      |> Event.changeset(%{
+      Events.create_event(%{
         event_type: "transfer",
         contract_address: address,
         event_args: transfer
       })
-      |> Repo.insert()
 
       projection_changes = %{
         contract_address: address,

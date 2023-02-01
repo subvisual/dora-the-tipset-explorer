@@ -1,1 +1,1 @@
-export ENV_VAR="something"
+export MIX_ENV="dev"

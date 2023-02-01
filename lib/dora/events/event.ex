@@ -1,11 +1,10 @@
-defmodule Dora.Schema.Event do
+defmodule Dora.Events.Event do
   use Ecto.Schema
 
   import Ecto.Changeset
 
   @fields [:contract_address, :event_type, :event_args]
 
-  @derive {Jason.Encoder, only: [:contract_address, :event_args]}
   @primary_key {:id, :binary_id, autogenerate: true}
   schema "events" do
     field(:contract_address, :string)

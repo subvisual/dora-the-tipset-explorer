@@ -1,11 +1,10 @@
-defmodule Dora.Schema.EventProjection do
+defmodule Dora.Projections.EventProjection do
   use Ecto.Schema
 
   import Ecto.Changeset
 
   @fields [:contract_address, :projection_type, :projection_id, :projection_fields]
 
-  @derive {Jason.Encoder, only: [:contract_address, :projection_fields, :projection_id]}
   @primary_key {:id, :binary_id, autogenerate: true}
   schema "event_projections" do
     field(:contract_address, :string)
