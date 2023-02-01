@@ -31,6 +31,15 @@ defmodule Dora.Projections do
     |> Repo.update()
   end
 
+  def insert_or_update_event_projection(filters, new_params) do
+    case Repo.get_by(EventProjection, filters) do
+      nil -> %EventProjection{}
+      projection -> projection
+    end
+    |> EventProjection.changeset(new_params)
+    |> Repo.insert_or_update()
+  end
+
   def delete_event_projection(%EventProjection{} = event_projection) do
     Repo.delete(event_projection)
   end

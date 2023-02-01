@@ -1,32 +1,22 @@
 defmodule Dora.Handlers.<%= @module_prefix %>.<%= @module_name %> do
   require Logger
 
-  alias Dora.Repo
-  alias Dora.Events
-  alias Dora.Projections.EventProjection
+  alias Dora.{Events, Projections, Repo}
   alias Dora.Handlers.Utils
 
   # What other things can you do inside an handler, and not generated here?
   #
-  # - You may want to add a projection event, using `%EventProjection{}`. Example:
+  # - You may want to add a projection event, using `Projections`. Example:
   #
-  #    projection_changes = %{
-  #      contract_address: address,
-  #      projection_type: "nft",
-  #      projection_id: SOME_ID_YOU_CAN_KEEP_TRACK,
-  #      projection_fields: %{owner: new_owner}
-  #    }
-  #
-  #    case Repo.get_by(EventProjection,
-  #           contract_address: address,
-  #           projection_type: "nft",
-  #           projection_id: id
-  #         ) do
-  #      nil -> %EventProjection{}
-  #      projection -> projection
-  #    end
-  #    |> EventProjection.changeset(projection_changes)
-  #    |> Repo.insert_or_update()
+  #    Projections.insert_or_update_event_projection(
+  #      [contract_address: address, projection_type: "nft", projection_id: id],
+  #      %{
+  #        contract_address: address,
+  #        projection_type: "nft",
+  #        projection_id: id,
+  #        projection_fields: %{owner: new_owner}
+  #      }
+  #    )
   #
   #  The code above creates or updates the owner of an NFT everytime a
   #  Transfer Event is detected. Be sure to keep/add DB interactions inside a Transaction!

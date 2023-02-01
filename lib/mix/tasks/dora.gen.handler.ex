@@ -37,7 +37,8 @@ defmodule Mix.Tasks.Dora.Gen.Handler do
       abi: abi
     ]
 
-    Mix.Generator.copy_template(@template_path, template_data[:file_output], template_data)
+    if abi != %{},
+      do: Mix.Generator.copy_template(@template_path, template_data[:file_output], template_data)
 
     Enum.each(abi, fn {event_name, _args} ->
       Utils.insert_new_dispatcher_handler(module, Macro.underscore(event_name), address)

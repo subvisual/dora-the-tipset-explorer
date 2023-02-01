@@ -1,9 +1,7 @@
 defmodule Dora.Handlers.Defaults.Transfer do
   require Logger
 
-  alias Dora.Repo
-  alias Dora.Events
-  alias Dora.Projections.EventProjection
+  alias Dora.{Events, Projections, Repo}
   alias Dora.Handlers.Utils
 
   def apply(address, {_function, topics}) do
@@ -25,23 +23,15 @@ defmodule Dora.Handlers.Defaults.Transfer do
         event_args: transfer
       })
 
-      projection_changes = %{
-        contract_address: address,
-        projection_type: "nft",
-        projection_id: id,
-        projection_fields: %{owner: new_owner}
-      }
-
-      case Repo.get_by(EventProjection,
-             contract_address: address,
-             projection_type: "nft",
-             projection_id: id
-           ) do
-        nil -> %EventProjection{}
-        projection -> projection
-      end
-      |> EventProjection.changeset(projection_changes)
-      |> Repo.insert_or_update()
+      Projections.insert_or_update_event_projection(
+        [contract_address: address, projection_type: "nft", projection_id: id],
+        %{
+          contract_address: address,
+          projection_type: "nft",
+          projection_id: id,
+          projection_fields: %{owner: new_owner}
+        }
+      )
     end)
     |> case do
       {:ok, _} = result -> result
