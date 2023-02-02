@@ -5,12 +5,8 @@ defmodule DoraWeb.EventProjectionControllerTest do
 
   alias Dora.EventProjections.EventProjection
 
-  @create_attrs %{
-
-  }
-  @update_attrs %{
-
-  }
+  @create_attrs %{}
+  @update_attrs %{}
   @invalid_attrs %{}
 
   setup %{conn: conn} do
@@ -26,7 +22,9 @@ defmodule DoraWeb.EventProjectionControllerTest do
 
   describe "create event_projection" do
     test "renders event_projection when data is valid", %{conn: conn} do
-      conn = post(conn, Routes.event_projection_path(conn, :create), event_projection: @create_attrs)
+      conn =
+        post(conn, Routes.event_projection_path(conn, :create), event_projection: @create_attrs)
+
       assert %{"id" => id} = json_response(conn, 201)["data"]
 
       conn = get(conn, Routes.event_projection_path(conn, :show, id))
@@ -37,7 +35,9 @@ defmodule DoraWeb.EventProjectionControllerTest do
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
-      conn = post(conn, Routes.event_projection_path(conn, :create), event_projection: @invalid_attrs)
+      conn =
+        post(conn, Routes.event_projection_path(conn, :create), event_projection: @invalid_attrs)
+
       assert json_response(conn, 422)["errors"] != %{}
     end
   end
@@ -45,8 +45,15 @@ defmodule DoraWeb.EventProjectionControllerTest do
   describe "update event_projection" do
     setup [:create_event_projection]
 
-    test "renders event_projection when data is valid", %{conn: conn, event_projection: %EventProjection{id: id} = event_projection} do
-      conn = put(conn, Routes.event_projection_path(conn, :update, event_projection), event_projection: @update_attrs)
+    test "renders event_projection when data is valid", %{
+      conn: conn,
+      event_projection: %EventProjection{id: id} = event_projection
+    } do
+      conn =
+        put(conn, Routes.event_projection_path(conn, :update, event_projection),
+          event_projection: @update_attrs
+        )
+
       assert %{"id" => ^id} = json_response(conn, 200)["data"]
 
       conn = get(conn, Routes.event_projection_path(conn, :show, id))
@@ -57,7 +64,11 @@ defmodule DoraWeb.EventProjectionControllerTest do
     end
 
     test "renders errors when data is invalid", %{conn: conn, event_projection: event_projection} do
-      conn = put(conn, Routes.event_projection_path(conn, :update, event_projection), event_projection: @invalid_attrs)
+      conn =
+        put(conn, Routes.event_projection_path(conn, :update, event_projection),
+          event_projection: @invalid_attrs
+        )
+
       assert json_response(conn, 422)["errors"] != %{}
     end
   end

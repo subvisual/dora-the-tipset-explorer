@@ -1,7 +1,7 @@
 defmodule Dora do
   require Logger
 
-  alias Dora.{Explorer}
+  alias Dora.{Explorer, Contracts}
 
   use DynamicSupervisor
 
@@ -20,13 +20,10 @@ defmodule Dora do
 
   def start_explorer_instance(address, abi_path) do
     address = String.downcase(address)
-    base_state = %{address: address, abi_path: abi_path}
 
     state =
-      case :dets.lookup(:addresses, address) do
-        [] -> base_state
-        [{_key, timestamp, _}] -> Map.put(base_state, :last_timestamp, timestamp)
-      end
+      %{address: address, abi_path: abi_path}
+      |> contract_last_timestamp(address)
 
     spec = {Explorer, state}
 
@@ -36,8 +33,11 @@ defmodule Dora do
   end
 
   def stop_explorer_instance(address) do
+    address = String.downcase(address)
+
     pause_explorer_instance(address)
     :dets.delete(:addresses, address)
+    Contracts.delete_contract(address)
   end
 
   def pause_explorer_instance(address) do
@@ -65,6 +65,16 @@ defmodule Dora do
     :ets.insert(:address_instances, {address, pid})
   end
 
+  def store_contract_information(address, timestamp, abi_path) do
+    :dets.insert(:addresses, {address, timestamp, abi_path})
+
+    Dora.Contracts.create_or_update_contract(address, %{
+      address: address,
+      last_timestamp: timestamp,
+      abi_path: abi_path
+    })
+  end
+
   @impl true
   def init(_init_arg) do
     DynamicSupervisor.init(strategy: :one_for_one)
@@ -76,8 +86,29 @@ defmodule Dora do
     end
 
     :dets.match_object(:addresses, {:_, :_, :_})
-    |> Enum.each(fn {address, _timestamp, abi_path} ->
-      start_explorer_instance(address, abi_path)
-    end)
+    |> case do
+      [] ->
+        Contracts.list_contracts()
+        |> Enum.each(&start_explorer_instance(&1.address, &1.abi_path))
+
+      list ->
+        Enum.each(list, fn {address, _timestamp, abi_path} ->
+          start_explorer_instance(address, abi_path)
+        end)
+    end
+  end
+
+  defp contract_last_timestamp(base_state, address) do
+    last_timestamp =
+      case :dets.lookup(:addresses, address) do
+        [] -> {:error, :not_found}
+        [{_key, timestamp, _}] -> {:ok, timestamp}
+      end
+      |> case do
+        {:error, :not_found} -> Contracts.contract_last_timestamp(address)
+        {:ok, timestamp} -> timestamp
+      end
+
+    Map.put(base_state, :last_timestamp, last_timestamp)
   end
 end

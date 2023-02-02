@@ -10,9 +10,7 @@ defmodule Dora.EventProjectionsFixtures do
   def event_projection_fixture(attrs \\ %{}) do
     {:ok, event_projection} =
       attrs
-      |> Enum.into(%{
-
-      })
+      |> Enum.into(%{})
       |> Dora.EventProjections.create_event_projection()
 
     event_projection

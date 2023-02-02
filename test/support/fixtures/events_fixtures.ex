@@ -10,9 +10,7 @@ defmodule Dora.EventsFixtures do
   def event_fixture(attrs \\ %{}) do
     {:ok, event} =
       attrs
-      |> Enum.into(%{
-
-      })
+      |> Enum.into(%{})
       |> Dora.Events.create_event()
 
     event

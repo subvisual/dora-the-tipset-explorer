@@ -23,30 +23,41 @@ defmodule Dora.EventProjectionsTest do
     test "create_event_projection/1 with valid data creates a event_projection" do
       valid_attrs = %{}
 
-      assert {:ok, %EventProjection{} = event_projection} = EventProjections.create_event_projection(valid_attrs)
+      assert {:ok, %EventProjection{} = event_projection} =
+               EventProjections.create_event_projection(valid_attrs)
     end
 
     test "create_event_projection/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = EventProjections.create_event_projection(@invalid_attrs)
+      assert {:error, %Ecto.Changeset{}} =
+               EventProjections.create_event_projection(@invalid_attrs)
     end
 
     test "update_event_projection/2 with valid data updates the event_projection" do
       event_projection = event_projection_fixture()
       update_attrs = %{}
 
-      assert {:ok, %EventProjection{} = event_projection} = EventProjections.update_event_projection(event_projection, update_attrs)
+      assert {:ok, %EventProjection{} = event_projection} =
+               EventProjections.update_event_projection(event_projection, update_attrs)
     end
 
     test "update_event_projection/2 with invalid data returns error changeset" do
       event_projection = event_projection_fixture()
-      assert {:error, %Ecto.Changeset{}} = EventProjections.update_event_projection(event_projection, @invalid_attrs)
+
+      assert {:error, %Ecto.Changeset{}} =
+               EventProjections.update_event_projection(event_projection, @invalid_attrs)
+
       assert event_projection == EventProjections.get_event_projection!(event_projection.id)
     end
 
     test "delete_event_projection/1 deletes the event_projection" do
       event_projection = event_projection_fixture()
-      assert {:ok, %EventProjection{}} = EventProjections.delete_event_projection(event_projection)
-      assert_raise Ecto.NoResultsError, fn -> EventProjections.get_event_projection!(event_projection.id) end
+
+      assert {:ok, %EventProjection{}} =
+               EventProjections.delete_event_projection(event_projection)
+
+      assert_raise Ecto.NoResultsError, fn ->
+        EventProjections.get_event_projection!(event_projection.id)
+      end
     end
 
     test "change_event_projection/1 returns a event_projection changeset" do

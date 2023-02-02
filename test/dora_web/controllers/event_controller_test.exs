@@ -5,12 +5,8 @@ defmodule DoraWeb.EventControllerTest do
 
   alias Dora.Events.Event
 
-  @create_attrs %{
-
-  }
-  @update_attrs %{
-
-  }
+  @create_attrs %{}
+  @update_attrs %{}
   @invalid_attrs %{}
 
   setup %{conn: conn} do

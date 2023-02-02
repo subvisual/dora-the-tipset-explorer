@@ -43,7 +43,7 @@ defmodule Dora.Explorer do
 
     new_state =
       if messages != [] do
-        :dets.insert(:addresses, {state.address, hd(messages)["timestamp"], state.abi_path})
+        Dora.store_contract_information(state.address, hd(messages)["timestamp"], state.abi_path)
 
         Map.put(state, :last_timestamp, hd(messages)["timestamp"])
       else
@@ -57,6 +57,7 @@ defmodule Dora.Explorer do
   def handle_info({:new_messages, messages}, state) do
     Enum.map(messages, &Filfox.message(&1["cid"]))
     |> List.flatten()
+    |> tap(&Logger.info("Detect #{length(&1)} new messages for: #{state.address}"))
     |> Enum.each(&handle_message_content(state, &1))
 
     {:noreply, state}
