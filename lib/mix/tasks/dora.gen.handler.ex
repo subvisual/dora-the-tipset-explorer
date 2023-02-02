@@ -37,7 +37,7 @@ defmodule Mix.Tasks.Dora.Gen.Handler do
       abi: abi
     ]
 
-    if abi != %{},
+    if abi != [],
       do: Mix.Generator.copy_template(@template_path, template_data[:file_output], template_data)
 
     Enum.each(abi, fn {event_name, _args} ->

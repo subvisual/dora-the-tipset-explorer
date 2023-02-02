@@ -49,6 +49,8 @@ defmodule Dora do
   end
 
   def get_pid_explorer_instance(address) do
+    address = String.downcase(address)
+
     case :ets.lookup(:address_instances, address) do
       [] -> {:error, :not_found}
       [{_address, pid}] -> {:ok, pid}
