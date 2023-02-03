@@ -2,9 +2,9 @@
 
 <img src="images/fox.png" width="150" />
 
-Indexing of blockchain events is crucial for dApps as it enables quick and efficient access to relevant data stored on the blockchain, which is required for executing Smart Contracts and providing a seamless user experience. Without indexing, the process of searching and retrieving data from the blockchain would be slow and cumbersome, negatively impacting the functionality and usability of dApps. This way, there are services like [The Graph](https://thegraph.com/en/), that make it easy for developers to start indexing these Events, on-demand.
+Indexing of blockchain events is crucial for dApps as it enables quick and efficient access to relevant data stored on the blockchain, which is required for executing Smart Contracts and providing a seamless user experience. Without indexing, the process of searching and retrieving data from the blockchain would be slow and cumbersome, negatively impacting the functionality and usability of dApps. This way, there are services like [The Graph](https://thegraph.com/en/), that make it easy for developers to start indexing these Events, on-demand. 
 
-This project, **Dora, The TipsetExplorer**, is a [The Graph](https://thegraph.com/en/)-like indexer, for the FEVM, where you specify Handlers (files writen/generated in Elixir that instruct `Dora` on how to deal with events) by Smart Contract or **default** Handlers for a specific Event. 
+This project, **Dora, The TipsetExplorer**, is a [The Graph](https://thegraph.com/en/)-like event indexer, for the FEVM, where you specify Handlers (files writen/generated in Elixir that instruct `Dora` on how to deal with events) by Smart Contract or **default** Handlers for a specific Event. 
 
 At the moment there is nothing similar to this Project working on FEVM (Hyperspace, at least), so we decided to build our own. For now, it relies on the [Filfox API](https://hyperspace.filfox.info/api/v1/docs/static/index.html) to obtain transactions and events information.
 
@@ -13,8 +13,8 @@ This project is part of the [Space Warp hackathon by ETHGlobal](https://ethgloba
 Example deployed at [dora-the-tipset-explorer.fly.dev/](https://dora-the-tipset-explorer.fly.dev/)
 
 You can query by replacing `:type` with an indexed Event/Projection type:
- - `events` at [dora-the-tipset-explorer.fly.dev/api/events/:type](https://dora-the-tipset-explorer.fly.dev/api/events/:type) and add any query params to filter.
- - `projections` at [dora-the-tipset-explorer.fly.dev/api/projections/:type](https://dora-the-tipset-explorer.fly.dev/api/projections/:type) and add any query params to filter.
+ - `events` at [dora-the-tipset-explorer.fly.dev/api/events/:type](https://dora-the-tipset-explorer.fly.dev/api/events/:type) and add any query params to filter. (example type: `new_broker_deployed`)
+ - `projections` at [dora-the-tipset-explorer.fly.dev/api/projections/:type](https://dora-the-tipset-explorer.fly.dev/api/projections/:type) and add any query params to filter. (example type: `loan`)
  
 ### Features
 
@@ -41,7 +41,7 @@ Note: The `EventDispatcher` is not a specific process, just a Module that each `
 
 `bin/setup` to install the necessary dependencies for the project to work. It will also set you up with a Postgres Database.
 
-`bin/server` after the setup, just and you should be good to go!
+`bin/server` after the setup, and you should be good to go!
 
 ## Start indexing new Smart Contracts
 
@@ -142,7 +142,7 @@ It's also possible to pause a specific Smart Contract from being indexed. Severa
 
 If you're not very familiar with Elixir there's a common concept of developing code generators. These generators are supposed to be used by less experienced devs, that want to try out something very quick, or by fully experienced ones that don't want to deal with boilerplate code.
 
-This way we created our generators to help in the creation of new Event Handlers. It requires the first argument to be the `Contract` or specific `Event` name, and the ABI path to be present. If you don't pass `contrac:AN_ADDRESS` in the command, then the generator will look for that `Event` name in the ABI, and only generate the handler for it. If, in this case, names don't match, nothing will be generated.
+This way we created our generators to help in the creation of new Event Handlers. It requires the first argument to be the `Contract` or specific `Event` name, and the ABI path to be present. If you don't pass `contract:AN_ADDRESS` in the command, then the generator will look for that `Event` name in the ABI, and only generate the handler for it. If, in this case, names don't match, nothing will be generated.
 
 ```bash
  # Generating a new Handler for a specific Contract
@@ -165,6 +165,8 @@ There are, already, a couple of ideas in the pipeline, that we believe would be 
 The concept of Generators is something that we can explore further with `Dora`, and the icing on the cake for this project to be used by other Builders would be to abstract all logic that it's not Handler related and that the Developer doesn't need to worry about. For example, when building subgraphs in [The Graph](https://thegraph.com/en/), you don't need to worry about the protocol internals, just that you need to specify your schemas and respective Handlers. 
 
 This way, we could take advantage of generators (something like `mix dora.new`), and build a `Dora installer`, that would create a new Elixir App, with all the base structure ready to be deployed, and using the original `Dora` app as a dependency. This is a lot better than having this project as a `Github Template`, for example, as you don't even need to know what's behind it.
+
+You can think of this installer to something like `yarn create next-app`. You also don't know what's happening with its internals.
 
 <p align="center">
   <img alt="Future idea for a full indexer generator" src="images/dora-generator.png" />
