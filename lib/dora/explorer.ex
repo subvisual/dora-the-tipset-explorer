@@ -6,6 +6,8 @@ defmodule Dora.Explorer do
   alias Dora.EventDispatcher
   alias Dora.Handlers.Utils
 
+  @refresh_rate Application.compile_env!(:dora, :explorer)[:refresh_rate]
+
   def start_link(args) do
     {:ok, pid} = GenServer.start_link(__MODULE__, args)
 
@@ -39,7 +41,7 @@ defmodule Dora.Explorer do
       |> Enum.filter(&filter_message?(&1, state.last_timestamp))
 
     send(self(), {:new_messages, messages})
-    Process.send_after(self(), :start, 10_000)
+    Process.send_after(self(), :start, @refresh_rate)
 
     new_state =
       if messages != [] do
@@ -73,7 +75,7 @@ defmodule Dora.Explorer do
   end
 
   defp filter_message?(message, last_timestamp) do
-    message["method"] != "CreateExternal" && message["timestamp"] > last_timestamp
+    message["timestamp"] > last_timestamp
   end
 
   defp handle_message_content(_state, %{error: message_cid}) do

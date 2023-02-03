@@ -4,7 +4,7 @@
 
 Indexing of blockchain events is crucial for dApps as it enables quick and efficient access to relevant data stored on the blockchain, which is required for executing Smart Contracts and providing a seamless user experience. Without indexing, the process of searching and retrieving data from the blockchain would be slow and cumbersome, negatively impacting the functionality and usability of dApps. This way, there are services like [The Graph](https://thegraph.com/en/), that make it easy for developers to start indexing these Events, on-demand.
 
-This project, **Dora, The TipsetExplorer", is a [The Graph](https://thegraph.com/en/)-like indexer, for the FEVM, where you specify Handlers (files writen/generated in Elixir that instruct `Dora` on how to deal with events) by Smart Contract or **default** Handlers for a specific Event. 
+This project, **Dora, The TipsetExplorer**, is a [The Graph](https://thegraph.com/en/)-like indexer, for the FEVM, where you specify Handlers (files writen/generated in Elixir that instruct `Dora` on how to deal with events) by Smart Contract or **default** Handlers for a specific Event. 
 
 At the moment there is nothing similar to this Project working on FEVM (Hyperspace, at least), so we decided to build our own. For now, it relies on the [Filfox API](https://hyperspace.filfox.info/api/v1/docs/static/index.html) to obtain transactions and events information.
 
@@ -23,7 +23,7 @@ This Indexer has some interesting built-in features that are very helpful for ma
 - Index Smart Contracts **on demand**;
 - Each Smart Contract has **its separate Process** to handle Indexing.
 - Fault tolerance at the Process/in-memory level. If a process responsible for Indexing a specific smart contract, crashes, **there is a Supervisor Process that will try to re-spawn it** and continue where it left off.
-- Fault tolerance in case of a full crash of `Dora`. It takes advantage of a `{key, value}` store in a local file. **If the whole app crashes, when restarting the server, previously running processes for each Smart Contract, will be started and resume at the same Event they were before**. This ensures that no Events are lost during the downtime.
+- Fault tolerance in case of a full crash of `Dora`. It takes advantage of a `{key, value}` store in a local file. **If the whole app crashes, when restarting the server, previously running processes for each Smart Contract, will be started and resume at the same Event they were before**. This ensures that no Events are lost during the downtime. If this file also fails us, `Dora`, will look for this information in its local Database. This way, it has 3 different mechanisms for recovery.
 - Easily **Pause and Stop indexing a Smart Contract**.
 - **Plug and Play Event Handlers** by Smart Contract address or Default Handlers for an Event type.
 - **Automatic code generation** for new Handlers.

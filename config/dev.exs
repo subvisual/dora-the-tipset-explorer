@@ -18,6 +18,8 @@ config :tesla,
        ssl_options: [verify: :verify_none]
      ]}
 
+config :dora, :explorer, refresh_rate: 30_000
+
 # For development, we disable any cache and enable
 # debugging and code reloading.
 #
