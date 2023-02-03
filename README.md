@@ -2,9 +2,13 @@
 
 <img src="images/fox.png" width="150" />
 
-This project is part of the [Space Warp hackathon by ETHGlobal](https://ethglobal.com/events/spacewarp). It's a [The Graph](https://thegraph.com/en/)-like indexer, for the FEVM, where you specify Handlers by Smart Contract or **default** Handlers for a specific Event. 
+Indexing of blockchain events is crucial for dApps as it enables quick and efficient access to relevant data stored on the blockchain, which is required for executing Smart Contracts and providing a seamless user experience. Without indexing, the process of searching and retrieving data from the blockchain would be slow and cumbersome, negatively impacting the functionality and usability of dApps. This way, there are services like [The Graph](https://thegraph.com/en/), that make it easy for developers to start indexing these Events, on-demand.
+
+This project, **Dora, The TipsetExplorer", is a [The Graph](https://thegraph.com/en/)-like indexer, for the FEVM, where you specify Handlers (files writen/generated in Elixir that instruct `Dora` on how to deal with events) by Smart Contract or **default** Handlers for a specific Event. 
 
 At the moment there is nothing similar to this Project working on FEVM (Hyperspace, at least), so we decided to build our own. For now, it relies on the [Filfox API](https://hyperspace.filfox.info/api/v1/docs/static/index.html) to obtain transactions and events information.
+
+This project is part of the [Space Warp hackathon by ETHGlobal](https://ethglobal.com/events/spacewarp).
 
 Example deployed at [dora-the-tipset-explorer.fly.dev/](https://dora-the-tipset-explorer.fly.dev/)
 
@@ -154,7 +158,7 @@ The new Handler file already comes with a bunch of code, that you can customize 
 
 ## Next Steps
 
-There are, already, a couple of ideas in the pipeline, that we believe would be a great addition to this Project and the FEVM as a whole.
+There are, already, a couple of ideas in the pipeline, that we believe would be a great addition to this Project and the FEVM as a whole. Below, we can see some of them.
 
 ### Generating a new Indexer App
 
@@ -177,3 +181,7 @@ To avoid being spammed with unwanted requests, there is also a plan to add some 
 ### Storing Indexed Events in Filecoin/IPFS
 
 Somewhat related to the previous topic and the tokenization of the system, instead of relying on Centralized Databases to store Events, in the future these should be stored under the Filecoin Network, IPFS, or a related on-chain service.
+
+### Replacing [Filfox API](https://hyperspace.filfox.info/api/v1/docs/static/index.html) with an RPC
+
+Instead of this Indexer relying on the Filfox API, an extra step, would be to start interacting with the RPC directly. We started this way, because the given API looked sturdy enough, and easy to use, to bootstrap the project in the **Space Warp Hackathon**.

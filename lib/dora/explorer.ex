@@ -57,7 +57,7 @@ defmodule Dora.Explorer do
   def handle_info({:new_messages, messages}, state) do
     Enum.map(messages, &Filfox.message(&1["cid"]))
     |> List.flatten()
-    |> tap(&Logger.info("Detect #{length(&1)} new messages for: #{state.address}"))
+    |> tap(&Logger.info("Detected #{length(&1)} new messages for: #{state.address}"))
     |> Enum.each(&handle_message_content(state, &1))
 
     {:noreply, state}
