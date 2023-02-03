@@ -31,6 +31,12 @@ defmodule Mix.Tasks.Utils do
       """)
   end
 
+  def execute(string, opts \\ []) when is_bitstring(string) and is_list(opts) do
+    [command | args] = String.split(string)
+    Mix.shell().info([:green, "* executing ", :reset, string])
+    System.cmd(command, args, env: opts)
+  end
+
   def insert_new_dispatcher_handler(module, event_name, nil) do
     content_to_replace = "def handle(type, address, _event) do\n"
 

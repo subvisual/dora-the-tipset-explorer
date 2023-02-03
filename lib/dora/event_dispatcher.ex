@@ -1,6 +1,12 @@
 defmodule Dora.EventDispatcher do
   require Logger
 
+  def dispatch(contract_address, {:error, decoded_event}) do
+    Logger.error(
+      "Couldn't find a matching Event for #{contract_address}: #{inspect(decoded_event)}"
+    )
+  end
+
   def dispatch(contract_address, {abi_selector, decoded_event}) do
     event_type = abi_selector.function
 

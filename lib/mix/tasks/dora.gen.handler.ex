@@ -44,6 +44,8 @@ defmodule Mix.Tasks.Dora.Gen.Handler do
       Utils.insert_new_dispatcher_handler(module, Macro.underscore(event_name), address)
     end)
 
+    Utils.execute("mix format")
+
     IO.puts("""
 
     -------
