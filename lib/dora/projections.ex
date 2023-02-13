@@ -5,11 +5,18 @@ defmodule Dora.Projections do
   import Ecto.Query
 
   def get_all_by_type(type, filters) do
+    id = filters["id"]
+    address = filters["contract_address"]
+
+    projection_fields_filters =
+      Map.drop(filters, ["contract_address", "id", "type"])
+      |> Map.to_list()
+
     EventProjection
     |> where(projection_type: ^type)
-    |> custom_filter(projection_id: filters["id"])
-    |> custom_filter(address: filters["contract_address"])
-    |> custom_filter(owner: filters["owner"])
+    |> custom_filter(projection_id: id)
+    |> custom_filter(address: address)
+    |> custom_filter(projection_fields_filters)
     |> Repo.all()
   end
 
@@ -56,8 +63,9 @@ defmodule Dora.Projections do
     where(query, projection_id: ^id)
   end
 
-  defp custom_filter(query, owner: owner) when not is_nil(owner) do
-    where(query, [projection], projection.projection_fields["owner"] == ^owner)
+  defp custom_filter(query, [{key, value} | rest]) when not is_nil(value) do
+    where(query, [event], event.event_args[^key] == ^value)
+    |> custom_filter(rest)
   end
 
   defp custom_filter(query, _), do: query

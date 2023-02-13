@@ -15,7 +15,7 @@ config :tesla,
     {Tesla.Adapter.Hackney,
      [
        recv_timeout: 30_000,
-       ssl_options: [verify: :verify_none]
+       ssl_options: [verify: :verify_peer, cacerts: :public_key.cacerts_get()]
      ]}
 
 config :dora, :explorer, refresh_rate: 30_000

@@ -5,12 +5,16 @@ defmodule Dora.Events do
   import Ecto.Query
 
   def get_all_by_type(type, filters) do
+    address = filters["contract_address"]
+
+    event_args_filters =
+      Map.drop(filters, ["contract_address", "type"])
+      |> Map.to_list()
+
     Event
     |> where(event_type: ^type)
-    |> custom_filter(address: filters["contract_address"])
-    |> custom_filter(from: filters["from"])
-    |> custom_filter(to: filters["to"])
-    |> custom_filter(id: filters["id"])
+    |> custom_filter(address: address)
+    |> custom_filter(event_args_filters)
     |> Repo.all()
   end
 
@@ -44,16 +48,9 @@ defmodule Dora.Events do
     where(query, contract_address: ^address)
   end
 
-  defp custom_filter(query, from: from) when not is_nil(from) do
-    where(query, [event], event.event_args["from"] == ^from)
-  end
-
-  defp custom_filter(query, to: to) when not is_nil(to) do
-    where(query, [event], event.event_args["to"] == ^to)
-  end
-
-  defp custom_filter(query, id: id) when not is_nil(id) do
-    where(query, [event], event.event_args["id"] == ^id)
+  defp custom_filter(query, [{key, value} | rest]) when not is_nil(value) do
+    where(query, [event], event.event_args[^key] == ^value)
+    |> custom_filter(rest)
   end
 
   defp custom_filter(query, _), do: query
