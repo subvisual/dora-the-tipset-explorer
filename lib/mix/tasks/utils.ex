@@ -65,7 +65,6 @@ defmodule Mix.Tasks.Utils do
     inject_eex_in_place(content_to_replace, content_to_inject, @event_dispatcher_path)
   end
 
-  # TODO: Update this to inject before default handler and not last end
   def inject_eex_in_place(content_to_replace, content_to_inject, file_path) do
     file = File.read!(file_path)
 
