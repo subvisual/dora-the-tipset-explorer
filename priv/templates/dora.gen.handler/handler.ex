@@ -2,7 +2,7 @@ defmodule Dora.Handlers.<%= @module_prefix %>.<%= @module_name %> do
   require Logger
 
   alias Dora.{Events, Projections, Repo}
-  alias Dora.Handlers.Utils
+  alias Dora.Utils
 
   # What other things can you do inside an handler, and not generated here?
   #
