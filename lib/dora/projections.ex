@@ -1,4 +1,6 @@
 defmodule Dora.Projections do
+  @moduledoc false
+
   alias Dora.Projections.EventProjection
   alias Dora.Repo
 

@@ -1,4 +1,6 @@
 defmodule Dora.Projections.EventProjection do
+  @moduledoc false
+
   use Ecto.Schema
 
   import Ecto.Changeset

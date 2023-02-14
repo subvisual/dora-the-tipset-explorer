@@ -1,10 +1,11 @@
 defmodule Dora.Explorer do
+  @moduledoc false
+
   require Logger
   use GenServer, restart: :transient
 
   alias Dora.Explorer.HttpRpc
-  alias Dora.EventDispatcher
-  alias Dora.Handlers.Utils
+  alias Dora.{EventDispatcher, Utils}
 
   @refresh_rate Application.compile_env!(:dora, :explorer)[:refresh_rate]
 
@@ -13,7 +14,6 @@ defmodule Dora.Explorer do
 
     Dora.insert_instance_in_ets(args.address, pid)
     send(pid, :request_logs)
-    Logger.info("Indexing #{args.address}. Last Block: #{Map.get(args, :last_block, 0)}.")
 
     {:ok, pid}
   end
@@ -26,10 +26,11 @@ defmodule Dora.Explorer do
   def init(init_arg) do
     case abi_specification(init_arg.abi_path) do
       {:ok, abi} ->
-        new_state =
-          init_arg
-          |> Map.put_new(:last_block, 0)
-          |> Map.put(:abi, abi)
+        new_state = Map.put(init_arg, :abi, abi)
+
+        Logger.info(
+          "Indexing #{new_state.address}. Last Block: #{Map.get(new_state, :last_block)}."
+        )
 
         {:ok, new_state}
 
@@ -43,7 +44,7 @@ defmodule Dora.Explorer do
     events =
       HttpRpc.events(state.address, state.last_block)
       |> tap(&Logger.info("Detected #{length(&1)} new Events for: #{state.address}"))
-      |> Enum.sort_by(&hex_to_int(&1["blockNumber"]))
+      |> Enum.sort_by(&Utils.hex_to_int(&1["blockNumber"]))
 
     Enum.each(events, &handle_event(state, &1))
     Process.send_after(self(), :request_logs, @refresh_rate)
@@ -74,33 +75,31 @@ defmodule Dora.Explorer do
   defp update_last_block_known(state, events) do
     last_block =
       List.last(events)["blockNumber"]
-      |> hex_to_int()
+      |> Utils.hex_to_int()
 
     Dora.store_contract_information(
       state.address,
-      last_block,
+      last_block + 1,
       state.abi_path
     )
 
-    Map.put(state, :last_block, last_block)
+    Map.put(state, :last_block, last_block + 1)
   end
 
   defp abi_specification(abi_path) do
-    with {:ok, binary} <- File.read(abi_path) do
-      specification = Jason.decode!(binary)
+    case File.read(abi_path) do
+      {:ok, binary} ->
+        specification = Jason.decode!(binary)
 
-      abi =
-        (specification["abi"] || specification["output"]["abi"])
-        |> ABI.parse_specification(include_events?: true)
+        abi =
+          (specification["abi"] || specification["output"]["abi"])
+          |> ABI.parse_specification(include_events?: true)
 
-      {:ok, abi}
-    else
+        {:ok, abi}
+
       error ->
         Logger.error("Error building ABI spec. Check if the File exists!")
         error
     end
   end
-
-  defp hex_to_int("0x" <> value), do: String.to_integer(value, 16)
-  defp hex_to_int(value), do: Logger.error("Invalid hex value: #{value}")
 end

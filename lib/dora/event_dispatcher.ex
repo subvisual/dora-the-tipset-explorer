@@ -1,4 +1,6 @@
 defmodule Dora.EventDispatcher do
+  @moduledoc false
+
   require Logger
 
   def dispatch(contract_address, {:error, decoded_event}) do

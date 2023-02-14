@@ -1,4 +1,6 @@
 defmodule Dora.Repo do
+  @moduledoc false
+
   use Ecto.Repo,
     otp_app: :dora,
     adapter: Ecto.Adapters.Postgres

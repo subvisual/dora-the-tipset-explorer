@@ -1,4 +1,6 @@
 defmodule Dora.Events do
+  @moduledoc false
+
   alias Dora.Repo
   alias Dora.Events.Event
 
