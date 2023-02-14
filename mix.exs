@@ -40,7 +40,9 @@ defmodule Dora.MixProject do
       {:phoenix_ecto, "~> 4.4"},
       {:phoenix_live_dashboard, "~> 0.6"},
       {:telemetry_metrics, "~> 0.6"},
-      {:telemetry_poller, "~> 1.0"}
+      {:telemetry_poller, "~> 1.0"},
+      {:uuid, "~> 1.1"},
+      {:credo, "~> 1.6", only: [:dev, :test], runtime: false}
     ]
   end
 

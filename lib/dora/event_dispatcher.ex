@@ -17,6 +17,8 @@ defmodule Dora.EventDispatcher do
 
   # If we want to deal with the event without worrying on the address
   # Default behaviour for all Transfer events
+  #
+  # Remove this if you don't need it in your handlers
   def handle("transfer", address, event) do
     Dora.Handlers.Defaults.Transfer.apply(address, event)
   end

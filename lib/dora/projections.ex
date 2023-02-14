@@ -20,6 +20,8 @@ defmodule Dora.Projections do
     |> Repo.all()
   end
 
+  def get_event_projection_by(filters), do: Repo.get_by(EventProjection, filters)
+
   def list_event_projections do
     Repo.all(EventProjection)
   end
@@ -30,6 +32,17 @@ defmodule Dora.Projections do
     %EventProjection{}
     |> EventProjection.changeset(attrs)
     |> Repo.insert()
+  end
+
+  def update_event_projection(contract_address, projection_id, projection_type, attrs) do
+    EventProjection
+    |> Repo.get_by(
+      projection_id: projection_id,
+      contract_address: contract_address,
+      projection_type: projection_type
+    )
+    |> EventProjection.changeset(attrs)
+    |> Repo.update()
   end
 
   def update_event_projection(%EventProjection{} = event_projection, attrs) do

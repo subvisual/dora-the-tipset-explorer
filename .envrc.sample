@@ -1,1 +1,2 @@
 export MIX_ENV="dev"
+export HTTP_RPC_ENDPOINT="https://api.hyperspace.node.glif.io/rpc/v1"
