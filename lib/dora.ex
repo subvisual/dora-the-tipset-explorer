@@ -65,12 +65,12 @@ defmodule Dora do
     :ets.insert(:address_instances, {address, pid})
   end
 
-  def store_contract_information(address, block, abi_path) do
-    :dets.insert(:addresses, {address, block, abi_path})
+  def store_contract_information(address, block_number, abi_path) do
+    :dets.insert(:addresses, {address, block_number, abi_path})
 
     Dora.Contracts.create_or_update_contract(address, %{
       address: address,
-      last_block: block,
+      last_block: block_number,
       abi_path: abi_path
     })
   end
