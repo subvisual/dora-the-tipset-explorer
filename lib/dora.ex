@@ -23,7 +23,7 @@ defmodule Dora do
 
     state =
       %{address: address, abi_path: abi_path}
-      |> contract_last_timestamp(address)
+      |> contract_last_block(address)
 
     spec = {Explorer, state}
 
@@ -65,12 +65,12 @@ defmodule Dora do
     :ets.insert(:address_instances, {address, pid})
   end
 
-  def store_contract_information(address, timestamp, abi_path) do
-    :dets.insert(:addresses, {address, timestamp, abi_path})
+  def store_contract_information(address, block, abi_path) do
+    :dets.insert(:addresses, {address, block, abi_path})
 
     Dora.Contracts.create_or_update_contract(address, %{
       address: address,
-      last_timestamp: timestamp,
+      last_block: block,
       abi_path: abi_path
     })
   end
@@ -92,23 +92,23 @@ defmodule Dora do
         |> Enum.each(&start_explorer_instance(&1.address, &1.abi_path))
 
       list ->
-        Enum.each(list, fn {address, _timestamp, abi_path} ->
+        Enum.each(list, fn {address, _block, abi_path} ->
           start_explorer_instance(address, abi_path)
         end)
     end
   end
 
-  defp contract_last_timestamp(base_state, address) do
-    last_timestamp =
+  defp contract_last_block(base_state, address) do
+    last_block =
       case :dets.lookup(:addresses, address) do
         [] -> {:error, :not_found}
-        [{_key, timestamp, _}] -> {:ok, timestamp}
+        [{_key, block, _}] -> {:ok, block}
       end
       |> case do
-        {:error, :not_found} -> Contracts.contract_last_timestamp(address)
-        {:ok, timestamp} -> timestamp
+        {:error, :not_found} -> Contracts.contract_last_block(address)
+        {:ok, block} -> block
       end
 
-    Map.put(base_state, :last_timestamp, last_timestamp)
+    Map.put(base_state, :last_block, last_block)
   end
 end

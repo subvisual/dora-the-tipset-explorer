@@ -2,7 +2,9 @@ defmodule Dora.Explorer.HttpRpc do
   require Logger
   use Tesla
 
-  plug(Tesla.Middleware.BaseUrl, "https://api.hyperspace.node.glif.io/rpc/v1")
+  @http_rpc Application.compile_env!(:dora, :explorer)[:http_rpc_endpoint]
+
+  plug(Tesla.Middleware.BaseUrl, @http_rpc)
   plug(Tesla.Middleware.Headers, [{"accept", "*/*"}])
   plug(Tesla.Middleware.JSON)
 

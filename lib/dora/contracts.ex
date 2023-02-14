@@ -12,10 +12,10 @@ defmodule Dora.Contracts do
 
   def get_contract_by_address(address), do: Repo.get_by(Contract, address: address)
 
-  def contract_last_timestamp(address) do
+  def contract_last_block(address) do
     case Repo.get_by(Contract, address: address) do
       nil -> 0
-      contract -> contract.last_timestamp
+      contract -> contract.last_block
     end
   end
 

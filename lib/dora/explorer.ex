@@ -13,7 +13,7 @@ defmodule Dora.Explorer do
 
     Dora.insert_instance_in_ets(args.address, pid)
     send(pid, :request_logs)
-    Logger.info("Indexing #{args.address}. Last Timestamp: #{Map.get(args, :last_timestamp, 0)}.")
+    Logger.info("Indexing #{args.address}. Last Block: #{Map.get(args, :last_block, 0)}.")
 
     {:ok, pid}
   end
@@ -28,7 +28,7 @@ defmodule Dora.Explorer do
       {:ok, abi} ->
         new_state =
           init_arg
-          |> Map.put_new(:last_timestamp, 0)
+          |> Map.put_new(:last_block, 0)
           |> Map.put(:abi, abi)
 
         {:ok, new_state}
@@ -41,14 +41,14 @@ defmodule Dora.Explorer do
   @impl true
   def handle_info(:request_logs, state) do
     events =
-      HttpRpc.events(state.address, state.last_timestamp)
+      HttpRpc.events(state.address, state.last_block)
       |> tap(&Logger.info("Detected #{length(&1)} new Events for: #{state.address}"))
       |> Enum.sort_by(&hex_to_int(&1["blockNumber"]))
 
     Enum.each(events, &handle_event(state, &1))
     Process.send_after(self(), :request_logs, @refresh_rate)
 
-    new_state = update_last_timestamp_known(state, events)
+    new_state = update_last_block_known(state, events)
 
     {:noreply, new_state}
   end
@@ -69,9 +69,9 @@ defmodule Dora.Explorer do
     EventDispatcher.dispatch(state.address, decoded_event)
   end
 
-  defp update_last_timestamp_known(state, []), do: state
+  defp update_last_block_known(state, []), do: state
 
-  defp update_last_timestamp_known(state, events) do
+  defp update_last_block_known(state, events) do
     last_block =
       List.last(events)["blockNumber"]
       |> hex_to_int()
@@ -82,7 +82,7 @@ defmodule Dora.Explorer do
       state.abi_path
     )
 
-    Map.put(state, :last_timestamp, last_block)
+    Map.put(state, :last_block, last_block)
   end
 
   defp abi_specification(abi_path) do

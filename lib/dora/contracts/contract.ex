@@ -7,7 +7,7 @@ defmodule Dora.Contracts.Contract do
   schema "contracts" do
     field :abi_path, :string
     field :address, :string
-    field :last_timestamp, :integer
+    field :last_block, :integer
 
     timestamps()
   end
@@ -15,8 +15,8 @@ defmodule Dora.Contracts.Contract do
   @doc false
   def changeset(contract, attrs) do
     contract
-    |> cast(attrs, [:address, :last_timestamp, :abi_path])
-    |> validate_required([:address, :last_timestamp, :abi_path])
+    |> cast(attrs, [:address, :last_block, :abi_path])
+    |> validate_required([:address, :last_block, :abi_path])
     |> unique_constraint(:address, name: "contracts_address_index")
   end
 end
