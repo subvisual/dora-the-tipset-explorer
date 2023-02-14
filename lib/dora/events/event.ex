@@ -1,4 +1,6 @@
 defmodule Dora.Events.Event do
+  @moduledoc false
+
   use Ecto.Schema
 
   import Ecto.Changeset

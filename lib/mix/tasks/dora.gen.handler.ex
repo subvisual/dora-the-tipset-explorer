@@ -1,4 +1,5 @@
 defmodule Mix.Tasks.Dora.Gen.Handler do
+  @moduledoc false
   @shortdoc "Generates an Handler for Events"
 
   require Logger
@@ -22,10 +23,10 @@ defmodule Mix.Tasks.Dora.Gen.Handler do
       |> Utils.parse_abi()
 
     abi =
-      if not is_contract do
-        Enum.filter(abi, fn {key, _value} -> key == module end)
-      else
+      if is_contract do
         abi
+      else
+        Enum.filter(abi, fn {key, _value} -> key == module end)
       end
 
     template_data = [

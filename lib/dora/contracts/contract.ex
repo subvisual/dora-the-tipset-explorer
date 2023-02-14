@@ -1,4 +1,6 @@
 defmodule Dora.Contracts.Contract do
+  @moduledoc false
+
   use Ecto.Schema
   import Ecto.Changeset
 

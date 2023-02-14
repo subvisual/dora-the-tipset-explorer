@@ -1,7 +1,9 @@
 defmodule Dora.Contracts do
-  import Ecto.Query, warn: false
-  alias Dora.Repo
+  @moduledoc false
 
+  import Ecto.Query, warn: false
+
+  alias Dora.Repo
   alias Dora.Contracts.Contract
 
   def list_contracts do
@@ -12,10 +14,10 @@ defmodule Dora.Contracts do
 
   def get_contract_by_address(address), do: Repo.get_by(Contract, address: address)
 
-  def contract_last_block(address) do
+  def contract_information(address) do
     case Repo.get_by(Contract, address: address) do
-      nil -> 0
-      contract -> contract.last_block
+      nil -> {0, nil}
+      contract -> {contract.last_block, contract.abi_path}
     end
   end
 

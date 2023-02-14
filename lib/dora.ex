@@ -1,4 +1,6 @@
 defmodule Dora do
+  @moduledoc false
+
   require Logger
 
   alias Dora.{Explorer, Contracts}
@@ -6,16 +8,26 @@ defmodule Dora do
   use DynamicSupervisor
 
   def start_link(init_arg) do
-    with {:ok, pid} <- DynamicSupervisor.start_link(__MODULE__, init_arg, name: __MODULE__) do
-      :dets.open_file(:addresses, [])
+    case DynamicSupervisor.start_link(__MODULE__, init_arg, name: __MODULE__) do
+      {:ok, pid} ->
+        :dets.open_file(:addresses, [])
+        restore_previous_state()
 
-      restore_previous_state()
+        {:ok, pid}
 
-      {:ok, pid}
-    else
       _error ->
         Logger.error("Error starting Dora")
     end
+  end
+
+  def start_explorer_instance(address) do
+    address = String.downcase(address)
+
+    state =
+      %{address: address}
+      |> contract_existing_information(address)
+
+    start_process(state, address)
   end
 
   def start_explorer_instance(address, abi_path) do
@@ -23,13 +35,9 @@ defmodule Dora do
 
     state =
       %{address: address, abi_path: abi_path}
-      |> contract_last_block(address)
+      |> contract_existing_information(address)
 
-    spec = {Explorer, state}
-
-    with {:error, error} <- DynamicSupervisor.start_child(__MODULE__, spec) do
-      Logger.error("Error indexing contract #{address}: #{inspect(error)}")
-    end
+    start_process(state, address)
   end
 
   def stop_explorer_instance(address) do
@@ -80,6 +88,14 @@ defmodule Dora do
     DynamicSupervisor.init(strategy: :one_for_one)
   end
 
+  defp start_process(state, address) do
+    spec = {Explorer, state}
+
+    with {:error, error} <- DynamicSupervisor.start_child(__MODULE__, spec) do
+      Logger.error("Error indexing contract #{address}: #{inspect(error)}")
+    end
+  end
+
   defp restore_previous_state do
     if :ets.whereis(:address_instances) == :undefined do
       :ets.new(:address_instances, [:set, :public, :named_table])
@@ -98,17 +114,18 @@ defmodule Dora do
     end
   end
 
-  defp contract_last_block(base_state, address) do
-    last_block =
+  defp contract_existing_information(base_state, address) do
+    {last_block, abi_path} =
       case :dets.lookup(:addresses, address) do
         [] -> {:error, :not_found}
-        [{_key, block, _}] -> {:ok, block}
+        [{_key, block, abi_path}] -> {:ok, block, abi_path}
       end
       |> case do
-        {:error, :not_found} -> Contracts.contract_last_block(address)
-        {:ok, block} -> block
+        {:error, :not_found} -> Contracts.contract_information(address)
+        {:ok, block, abi_path} -> {block, abi_path}
       end
 
     Map.put(base_state, :last_block, last_block)
+    |> Map.put_new(:abi_path, abi_path)
   end
 end

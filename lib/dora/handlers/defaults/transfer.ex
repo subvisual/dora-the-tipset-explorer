@@ -1,4 +1,6 @@
 defmodule Dora.Handlers.Defaults.Transfer do
+  @moduledoc false
+
   require Logger
 
   alias Dora.{Events, Projections, Repo}

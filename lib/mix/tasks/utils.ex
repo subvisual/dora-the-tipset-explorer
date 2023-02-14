@@ -1,4 +1,5 @@
 defmodule Mix.Tasks.Utils do
+  @moduledoc false
   require Logger
 
   @event_dispatcher_path "lib/dora/event_dispatcher.ex"
@@ -71,7 +72,8 @@ defmodule Mix.Tasks.Utils do
     if String.contains?(file, content_to_inject) do
       :ok
     else
-      Mix.shell().info([:green, "* injecting ", :reset, Path.relative_to_cwd(file_path)])
+      path = Path.relative_to_cwd(file_path)
+      Mix.shell().info([:green, "* injecting ", :reset, path])
 
       file
       |> String.replace(content_to_replace, content_to_inject)
