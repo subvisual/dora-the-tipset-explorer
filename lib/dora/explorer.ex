@@ -43,6 +43,7 @@ defmodule Dora.Explorer do
   def handle_info(:request_logs, state) do
     events =
       HttpRpc.events(state.address, state.last_block)
+      |> Enum.filter(&(not &1["removed"]))
       |> tap(&Logger.info("Detected #{length(&1)} new Events for: #{state.address}"))
       |> Enum.sort_by(&Utils.hex_to_int(&1["blockNumber"]))
 
