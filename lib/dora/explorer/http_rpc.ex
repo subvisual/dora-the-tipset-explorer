@@ -6,16 +6,15 @@ defmodule Dora.Explorer.HttpRpc do
 
   alias Dora.Utils
 
-  @http_rpc Application.compile_env!(:dora, :explorer)[:http_rpc_endpoint]
   @maximum_blocks_from_the_past 60_400
 
-  plug(Tesla.Middleware.BaseUrl, @http_rpc)
+  plug(Tesla.Middleware.BaseUrl, get_rpc_endpoint())
   plug(Tesla.Middleware.Headers, [{"accept", "*/*"}])
   plug(Tesla.Middleware.JSON)
 
   def latest_block do
     body = %{
-      id: 1,
+      id: UUID.uuid4(),
       jsonrpc: "2.0",
       method: "Filecoin.EthBlockNumber",
       params: []
@@ -71,5 +70,13 @@ defmodule Dora.Explorer.HttpRpc do
   defp handle_events(_, address, from_block) do
     Logger.error("Error requesting events: #{address} from block: #{from_block}")
     []
+  end
+
+  defp get_rpc_endpoint do
+    System.get_env("HTTP_RPC_ENDPOINT") ||
+      raise """
+      environment variable HTTP_RPC_ENDPOINT is missing.
+      For example: https://api.hyperspace.node.glif.io/rpc/v1
+      """
   end
 end
