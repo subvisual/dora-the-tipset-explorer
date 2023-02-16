@@ -69,16 +69,16 @@ The first thing we need to do is to add the pattern match for that Event in `Dor
 defmodule Dora.EventDispatcher do
   # (...)
  
-  def handle("transfer", "0x1234", event) do
-    Dora.Handlers.Contracts.ERC20.apply("transfer", "0x1234", event)
+  def handle("transfer", "0x1234", event, original_event) do
+    Dora.Handlers.Contracts.ERC20.apply("transfer", "0x1234", event, original_event)
   end
 
-  def handle("transfer", "0x9876", event) do
-    Dora.Handlers.Contracts.ERC721.apply("transfer", "0x9876", event)
+  def handle("transfer", "0x9876", event, original_event) do
+    Dora.Handlers.Contracts.ERC721.apply("transfer", "0x9876", event, original_event)
   end
  
-  def handle("transfer", address, event) do
-    Dora.Handlers.Defaults.Transfer.apply(address, event)
+  def handle("transfer", address, event, original_event) do
+    Dora.Handlers.Defaults.Transfer.apply(address, event, original_event)
   end
 
   # (...)
@@ -94,7 +94,7 @@ defmodule Dora.Handlers.Defaults.Transfer do
   alias Dora.{Events, Repo}
   alias Dora.Handlers.Utils
 
-  def apply(address, {_function, topics}) do
+  def apply(address, {_function, topics}, original_event) do
     topics_map = Utils.build_topics_maps(topics)
 
     transfer = %{
@@ -106,7 +106,10 @@ defmodule Dora.Handlers.Defaults.Transfer do
     Events.create_event(%{
       event_type: "transfer",
       contract_address: address,
-      event_args: transfer
+      event_args: transfer,
+      block_hash: original_event["blockHash"],
+      tx_hash: original_event["transactionHash"],
+      log_index: original_event["logIndex"]
     })
   end
 end
@@ -155,6 +158,14 @@ This way we created our generators to help in the creation of new Event Handlers
 For example, the first command will create a new file `lib/dora/handlers/contracts/erc20.ex`, and it will go through all Events present in the ABI and automatically inject the respective code for pattern matches in `lib/dora/event_dispatcher.ex` (as we saw above).
 
 The new Handler file already comes with a bunch of code, that you can customize at your will, without needing to deal with setting up things and boilerplate code.
+
+## Deploying your own Indexer
+
+If you want to give this a try, you can easily deploy your own version on [Fly.io](https://fly.io). This repo already comes with the `Dockerfile` and `fly.toml` files you need.
+
+Just don't forget to follow the instructions and set up a database and a secret variable for `HTTP_RPC_ENDPOINT`.
+
+It should also work in any other Cloud Provider/Servive, but you may require a few changes.
 
 ## Next Steps
 
