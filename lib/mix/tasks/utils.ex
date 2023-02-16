@@ -43,8 +43,8 @@ defmodule Mix.Tasks.Utils do
 
     content_to_inject =
       """
-      def handle("#{event_name}", address, event) do
-          Dora.Handlers.Defaults.#{module}.apply(address, event)
+      def handle("#{event_name}", address, event, original_event) do
+          Dora.Handlers.Defaults.#{module}.apply(address, event, original_event)
         end
 
       """ <> "  #{content_to_replace}"
@@ -53,13 +53,14 @@ defmodule Mix.Tasks.Utils do
   end
 
   def insert_new_dispatcher_handler(module, event_name, contract_address) do
-    content_to_replace = "|> handle(contract_address, {abi_selector, decoded_event})\n  end\n"
+    content_to_replace =
+      "|> handle(contract_address, {abi_selector, decoded_event}, original_event)\n  end\n"
 
     content_to_inject =
       "#{content_to_replace} \n" <>
         """
-          def handle("#{event_name}", "#{contract_address}", event) do
-            Dora.Handlers.Contracts.#{module}.apply("#{event_name}", "#{contract_address}", event)
+          def handle("#{event_name}", "#{contract_address}", event, original_event) do
+            Dora.Handlers.Contracts.#{module}.apply("#{event_name}", "#{contract_address}", event, original_event)
           end
         """
 

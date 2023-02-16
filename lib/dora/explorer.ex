@@ -68,7 +68,7 @@ defmodule Dora.Explorer do
         Utils.pad_data_string(message["data"] || "0x")
       )
 
-    EventDispatcher.dispatch(state.address, decoded_event)
+    EventDispatcher.dispatch(state.address, decoded_event, message)
   end
 
   defp update_last_block_known(state, []), do: state

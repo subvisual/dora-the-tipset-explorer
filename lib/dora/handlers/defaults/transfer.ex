@@ -6,7 +6,7 @@ defmodule Dora.Handlers.Defaults.Transfer do
   alias Dora.{Events, Projections, Repo}
   alias Dora.Utils
 
-  def apply(address, {_function, topics}) do
+  def apply(address, {_function, topics}, original_event) do
     topics_map = Utils.build_topics_maps(topics)
 
     new_owner = topics_map["to"]
@@ -22,7 +22,10 @@ defmodule Dora.Handlers.Defaults.Transfer do
       Events.create_event(%{
         event_type: "transfer",
         contract_address: address,
-        event_args: transfer
+        event_args: transfer,
+        block_hash: original_event["blockHash"],
+        tx_hash: original_event["transactionHash"],
+        log_index: original_event["logIndex"]
       })
 
       Projections.insert_or_update_event_projection(
