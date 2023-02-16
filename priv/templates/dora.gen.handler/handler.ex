@@ -27,7 +27,7 @@ defmodule Dora.Handlers.<%= @module_prefix %>.<%= @module_name %> do
   #
   # - Many other things.
   <%= for {type, args} <- @abi do %>
-  def apply(<%= if not is_nil(@address), do: "#{inspect Macro.underscore(type)}, "  %>address, {_function, topics}) do
+  def apply(<%= if not is_nil(@address), do: "#{inspect Macro.underscore(type)}, "  %>address, {_function, topics}, original_event) do
     topics_map = Utils.build_topics_maps(topics)
 
     <%= Macro.underscore(type) %> = %{
@@ -38,7 +38,10 @@ defmodule Dora.Handlers.<%= @module_prefix %>.<%= @module_name %> do
       Events.create_event(%{
         event_type: "<%= Macro.underscore(type) %>",
         contract_address: address,
-        event_args: <%= Macro.underscore(type) %>
+        event_args: <%= Macro.underscore(type) %>,
+        block_hash: original_event["blockHash"],
+        tx_hash: original_event["transactionHash"],
+        log_index: original_event["logIndex"]
       })
 
       # Other code you may want to add inside the Transaction
