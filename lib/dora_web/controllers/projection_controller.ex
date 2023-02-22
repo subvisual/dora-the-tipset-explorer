@@ -7,6 +7,6 @@ defmodule DoraWeb.ProjectionController do
 
   def index(conn, %{"type" => type} = params) do
     event_projections = Projections.get_all_by_type(type, params)
-    render(conn, "index.json", projections: event_projections)
+    render(conn, :index, projections: event_projections)
   end
 end
