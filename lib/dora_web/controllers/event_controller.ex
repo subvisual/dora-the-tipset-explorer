@@ -7,6 +7,6 @@ defmodule DoraWeb.EventController do
 
   def index(conn, %{"type" => type} = params) do
     events = Events.get_all_by_type(type, params)
-    render(conn, "index.json", events: events)
+    render(conn, :index, events: events)
   end
 end
