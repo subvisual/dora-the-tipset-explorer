@@ -20,12 +20,14 @@ defmodule DoraWeb.Endpoint do
     at: "/",
     from: :dora,
     gzip: false,
-    only: ~w(assets fonts images favicon.ico robots.txt)
+    only: DoraWeb.static_paths()
   )
 
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.
   if code_reloading? do
+    socket("/phoenix/live_reload/socket", Phoenix.LiveReloader.Socket)
+    plug(Phoenix.LiveReloader)
     plug(Phoenix.CodeReloader)
     plug(Phoenix.Ecto.CheckRepoStatus, otp_app: :dora)
   end

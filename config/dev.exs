@@ -34,7 +34,10 @@ config :dora, DoraWeb.Endpoint,
   code_reloader: true,
   debug_errors: true,
   secret_key_base: "9LpZk8G5HX7jF4S52+xlo/xW0Jz09/LtsOB0OX9TXP8qp156CW0H2XyLR25zqfTd",
-  watchers: []
+  watchers: [
+    esbuild: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch)]},
+    tailwind: {Tailwind, :install_and_run, [:default, ~w(--watch)]}
+  ]
 
 # ## SSL Support
 #
@@ -59,6 +62,19 @@ config :dora, DoraWeb.Endpoint,
 # If desired, both `http:` and `https:` keys can be
 # configured to run both http and https servers on
 # different ports.
+
+# Watch static and templates for browser reloading.
+config :dora, DoraWeb.Endpoint,
+  live_reload: [
+    patterns: [
+      ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
+      ~r"priv/gettext/.*(po)$",
+      ~r"lib/dora_web/(controllers|live|components)/.*(ex|heex)$"
+    ]
+  ]
+
+# Enable dev routes for dashboard and mailbox
+config :dora, dev_routes: true
 
 # Do not include metadata nor timestamps in development logs
 config :logger, :console, format: "[$level] $message\n"
