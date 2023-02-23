@@ -1,0 +1,84 @@
+<form phx-submit="search" phx-change="validate">
+  <h1 class="font-bold text-4xl">API Playground</h1>
+
+  <div class="flex flex-col gap-4 pt-8">
+    <.input
+      name="model-type"
+      type="select"
+      options={[{"Events", "events"}, {"Projections", "projections"}]}
+      value={@model_type}
+      label="What are you looking for?"
+    />
+    <.input
+      name="type"
+      type="select"
+      options={[{"", ""}] ++ @available_types}
+      value={@type}
+      label="Type"
+    />
+  </div>
+
+  <p class="text-sm font-semibold leading-6 text-zinc-800 pt-4">Filters</p>
+
+  <div class="flex flex-col">
+    <%= for {filter, index} <- Enum.with_index(@filters) do %>
+      <div class="flex flex-row justify-between gap-4 items-end">
+        <div class="w-full">
+          <.input
+            name={"filter-key#{index}"}
+            type="select"
+            options={@available_filters}
+            value={filter["filter-key"]}
+          />
+        </div>
+        <div class="w-full">
+          <.input
+            name={"filter-value#{index}"}
+            type="text"
+            value={filter["filter-value"]}
+            placeholder="Filter value"
+          />
+        </div>
+        <div class="w-10">
+          <.button phx-click="remove-filter" phx-value-index={index} type="button">
+            <Heroicons.trash solid class="h-5 w-5 group-hover:opacity-70" />
+          </.button>
+        </div>
+      </div>
+    <% end %>
+
+    <div class="pt-2">
+      <.button phx-click="add-filter" type="button">
+        <Heroicons.plus solid class="h-5 w-5" />
+      </.button>
+    </div>
+  </div>
+
+  <div class="flex gap-8 pt-8">
+    <.button type="submit">
+      <div class="flex gap-2 items-center">
+        Search <Heroicons.magnifying_glass solid class="h-5 w-5" />
+      </div>
+    </.button>
+
+    <div class="flex flex-col rounded-md border-2 border-gray-300 px-4 w-full bg-slate-100 shadow-sm truncate">
+      <p class="text-m font-semibold leading-6 text-zinc-800">Try it at:</p>
+      <a
+        class="underline"
+        href={"/api/#{@model_type}/#{@type || ":type"}#{map_to_query_string(@filters)}"}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        /api/<%= @model_type %>/<%= @type || ":type" %><%= map_to_query_string(@filters) %>
+      </a>
+    </div>
+  </div>
+</form>
+
+<div class="pt-16">
+  <h2 class="font-bold text-2xl">Result</h2>
+
+  <div class="w-full rounded-md border-2 border-gray-300 shadow-sm bg-slate-100 h-96 whitespace-pre-wrap text-xs overflow-auto px-4">
+    <%= @results %>
+  </div>
+</div>

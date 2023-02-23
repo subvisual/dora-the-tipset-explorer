@@ -6,6 +6,26 @@ defmodule Dora.Events do
 
   import Ecto.Query
 
+  def get_unique_fields_for_type(type) do
+    event_keys =
+      Event
+      |> where(event_type: ^type)
+      |> select([:event_args])
+      |> first()
+      |> Repo.one()
+      |> then(& &1.event_args)
+      |> Map.keys()
+
+    ["", "contract_address"] ++ event_keys
+  end
+
+  def get_unique_types do
+    Event
+    |> distinct(:event_type)
+    |> select([:event_type])
+    |> Repo.all()
+  end
+
   def get_all_by_type(type, filters) do
     address = filters["contract_address"]
 
