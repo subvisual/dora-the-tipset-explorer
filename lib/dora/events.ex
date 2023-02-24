@@ -49,7 +49,7 @@ defmodule Dora.Events do
   def create_event(attrs \\ %{}) do
     %Event{}
     |> Event.changeset(attrs)
-    |> Repo.insert()
+    |> Repo.insert(on_conflict: :nothing)
   end
 
   def update_event(%Event{} = event, attrs) do
