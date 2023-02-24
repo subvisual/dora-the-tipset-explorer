@@ -6,6 +6,26 @@ defmodule Dora.Projections do
 
   import Ecto.Query
 
+  def get_unique_fields_for_type(type) do
+    projection_keys =
+      EventProjection
+      |> where(projection_type: ^type)
+      |> select([:projection_fields])
+      |> first()
+      |> Repo.one()
+      |> then(& &1.projection_fields)
+      |> Map.keys()
+
+    ["", "contract_address", "id"] ++ projection_keys
+  end
+
+  def get_unique_types do
+    EventProjection
+    |> distinct(:projection_type)
+    |> select([:projection_type])
+    |> Repo.all()
+  end
+
   def get_all_by_type(type, filters) do
     id = filters["id"]
     address = filters["contract_address"]

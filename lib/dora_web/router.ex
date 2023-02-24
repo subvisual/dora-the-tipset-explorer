@@ -15,11 +15,9 @@ defmodule DoraWeb.Router do
   end
 
   scope "/", DoraWeb do
-    scope "/playground" do
-      pipe_through :browser
+    pipe_through :browser
 
-      get "/", PageController, :home
-    end
+    live "/", PlaygroundLive
 
     scope "/api" do
       pipe_through :api

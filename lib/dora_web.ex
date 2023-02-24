@@ -85,6 +85,7 @@ defmodule DoraWeb do
       import Phoenix.HTML
       # Core UI components and translation
       import DoraWeb.CoreComponents
+      import DoraWeb.Helpers.Live
       import DoraWeb.Gettext
 
       # Shortcut for generating JS commands
