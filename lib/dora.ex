@@ -65,6 +65,10 @@ defmodule Dora do
     end
   end
 
+  def running_instances do
+    :ets.match(:address_instances, {:_, :_, :_})
+  end
+
   def delete_instance_from_ets(address) do
     :ets.delete(:address_instances, address)
   end

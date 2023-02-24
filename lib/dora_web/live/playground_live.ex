@@ -1,6 +1,6 @@
 defmodule DoraWeb.PlaygroundLive do
   use DoraWeb, :live_view
-  alias Dora.{Events, Projections}
+  alias Dora.{Contracts, Events, Projections}
   alias DoraWeb.{EventProjectionJSON, EventJSON}
 
   def mount(_params, _session, socket) do
@@ -8,9 +8,14 @@ defmodule DoraWeb.PlaygroundLive do
       Events.get_unique_types()
       |> Enum.map(&{&1.event_type, &1.event_type})
 
+    contracts = Contracts.list_contracts()
+    running_contracts = Dora.running_instances()
+
     {:ok,
      assign(socket,
        available_types: event_types,
+       contracts: contracts,
+       running_contracts: running_contracts,
        model_type: "events",
        type: nil,
        filters: [],
