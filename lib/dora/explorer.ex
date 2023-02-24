@@ -13,6 +13,7 @@ defmodule Dora.Explorer do
     {:ok, pid} = GenServer.start_link(__MODULE__, args)
 
     Dora.insert_instance_in_ets(args.address, pid)
+    Dora.store_contract_information(args.address, args.last_block, args.abi_path)
     send(pid, :request_logs)
 
     {:ok, pid}
