@@ -3,24 +3,42 @@ defmodule DoraWeb.PlaygroundLive do
   alias Dora.{Contracts, Events, Projections}
   alias DoraWeb.{EventProjectionJSON, EventJSON}
 
+  @refresh_rate Application.compile_env!(:dora, :explorer)[:refresh_rate]
+
   def mount(_params, _session, socket) do
+    if connected?(socket), do: Process.send_after(self(), :update, @refresh_rate)
+
     event_types =
       Events.get_unique_types()
       |> Enum.map(&{&1.event_type, &1.event_type})
 
     contracts = Contracts.list_contracts()
-    running_contracts = Dora.running_instances()
 
     {:ok,
      assign(socket,
        available_types: event_types,
        contracts: contracts,
-       running_contracts: running_contracts,
        model_type: "events",
        type: nil,
        filters: [],
        available_filters: [],
        results: ""
+     )}
+  end
+
+  def handle_info(:update, socket) do
+    event_types =
+      Events.get_unique_types()
+      |> Enum.map(&{&1.event_type, &1.event_type})
+
+    contracts = Contracts.list_contracts()
+
+    Process.send_after(self(), :update, @refresh_rate)
+
+    {:noreply,
+     assign(socket,
+       available_types: event_types,
+       contracts: contracts
      )}
   end
 

@@ -6,8 +6,17 @@ defmodule Dora.Contracts do
   alias Dora.Repo
   alias Dora.Contracts.Contract
 
+  def list_contracts(filters) when is_list(filters) do
+    Contract
+    |> where(^filters)
+    |> order_by([:inserted_at])
+    |> Repo.all()
+  end
+
   def list_contracts do
-    Repo.all(Contract)
+    Contract
+    |> order_by([:inserted_at])
+    |> Repo.all()
   end
 
   def get_contract!(id), do: Repo.get!(Contract, id)
