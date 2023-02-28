@@ -39,9 +39,7 @@ echo ""
 pp_info "setup" "Installing elixir dependencies..."
 MIX_ENV=$env mix local.hex --force
 MIX_ENV=$env mix local.rebar --force
-MIX_ENV=$env mix deps.get
-MIX_ENV=$env mix ecto.create
-MIX_ENV=$env mix ecto.migrate
+MIX_ENV=$env mix setup
 
 echo ""
 pp_success "setup" "You're good to go! Run bin/server to get the development server running."

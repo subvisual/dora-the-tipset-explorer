@@ -7,8 +7,6 @@
       <p class="rounded-full bg-brand/5 px-2 text-[0.8125rem] font-medium leading-6 text-brand">
         Dora, the TipsetExplorer
       </p>
-    </div>
-    <div class="flex items-center gap-4">
       <a
         href="https://github.com/finiam/dora-the-tipset-explorer"
         class="text-[0.8125rem] font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
@@ -21,6 +19,28 @@
       >
         Know More <span aria-hidden="true">&rarr;</span>
       </a>
+    </div>
+    <div class="relative z-10 flex items-center gap-4 px-4 sm:px-6 lg:px-8 justify-end">
+      <%= if @current_user do %>
+        <span class="text-[0.8125rem] text-zinc-900">
+          <%= "Hello, #{String.slice(@current_user.eth_address, 0..8)}..." %>
+        </span>
+        <.link
+          href={~p"/users/log_out"}
+          method="delete"
+          class="rounded-lg bg-zinc-100 px-2 py-1 text-[0.8125rem] font-semibold leading-6 text-zinc-900 hover:bg-zinc-200/80 active:text-zinc-900/70 hover:text-zinc-700"
+        >
+          <span class="flex gap-2 items-center">
+            Log out
+            <Heroicons.arrow_right_on_rectangle solid class="h-5 w-5 group-hover:opacity-70" />
+          </span>
+        </.link>
+      <% else %>
+        <%= live_render(@socket, DoraWeb.MetamaskButtonLive,
+          id: "connect",
+          session: %{"id" => "metamask-login"}
+        ) %>
+      <% end %>
     </div>
   </div>
 </header>
