@@ -125,7 +125,7 @@ defmodule Dora do
         |> Enum.each(&start_explorer_instance(&1.address, &1.abi_path))
 
       list ->
-        Enum.each(list, fn {address, _block, abi_path} ->
+        Enum.each(list, fn {address, _block, abi_path, _status} ->
           start_explorer_instance(address, abi_path)
         end)
     end
