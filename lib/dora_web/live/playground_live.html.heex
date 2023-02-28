@@ -10,9 +10,16 @@
     </:col>
     <:col :let={contract} label="Block"><%= contract.last_block %></:col>
     <:col :let={contract} label="Status">
-      <p class={"rounded-full #{pill_color(contract, @running_contracts)} px-2 text-[0.8125rem] font-medium leading-6 text-center"}>
-        <%= status_description(contract, @running_contracts) %>
+      <p class={"rounded-full #{pill_color(contract)} px-2 text-[0.8125rem] font-medium leading-6 text-center"}>
+        <%= status_description(contract) %>
       </p>
+    </:col>
+    <:col :let={contract} label="Last Run">
+      <%= if contract.last_run do %>
+        <%= Calendar.strftime(contract.last_run, "%d/%m/%Y %H:%M:%S") %>
+      <% else %>
+        ---
+      <% end %>
     </:col>
   </.table>
 </div>

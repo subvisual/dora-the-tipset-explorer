@@ -8,16 +8,16 @@ defmodule DoraWeb.Helpers.Live do
     if query != "", do: "?#{query}", else: ""
   end
 
-  def pill_color(contract, running) do
-    if Enum.any?(running, &(hd(&1) == contract.address)) do
+  def pill_color(contract) do
+    if contract.status == :running do
       "bg-green-100 text-green-500"
     else
       "bg-brand/5 text-brand"
     end
   end
 
-  def status_description(contract, running) do
-    if Enum.any?(running, &(hd(&1) == contract.address)) do
+  def status_description(contract) do
+    if contract.status == :running do
       "Running"
     else
       "Paused"

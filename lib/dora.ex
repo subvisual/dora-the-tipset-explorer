@@ -51,6 +51,17 @@ defmodule Dora do
   def pause_explorer_instance(address) do
     with {:ok, pid} <- get_pid_explorer_instance(address) do
       Explorer.stop(pid)
+      delete_instance_from_ets(address)
+
+      case :dets.lookup(:addresses, address) do
+        [] ->
+          :ok
+
+        [{_key, block, abi_path, _status}] ->
+          :dets.insert(:addresses, {address, block, abi_path, :paused})
+      end
+
+      Contracts.update_contract(address, %{status: "paused"})
 
       {:ok, :closed}
     end
@@ -78,12 +89,14 @@ defmodule Dora do
   end
 
   def store_contract_information(address, block_number, abi_path) do
-    :dets.insert(:addresses, {address, block_number, abi_path})
+    :dets.insert(:addresses, {address, block_number, abi_path, :running})
 
     Dora.Contracts.create_or_update_contract(address, %{
       address: address,
       last_block: block_number,
-      abi_path: abi_path
+      abi_path: abi_path,
+      status: :running,
+      last_run: DateTime.utc_now()
     })
   end
 
@@ -105,14 +118,14 @@ defmodule Dora do
       :ets.new(:address_instances, [:set, :public, :named_table])
     end
 
-    :dets.match_object(:addresses, {:_, :_, :_})
+    :dets.match_object(:addresses, {:_, :_, :_, :running})
     |> case do
       [] ->
-        Contracts.list_contracts()
+        Contracts.list_contracts(status: :running)
         |> Enum.each(&start_explorer_instance(&1.address, &1.abi_path))
 
       list ->
-        Enum.each(list, fn {address, _block, abi_path} ->
+        Enum.each(list, fn {address, _block, abi_path, _status} ->
           start_explorer_instance(address, abi_path)
         end)
     end
@@ -122,7 +135,7 @@ defmodule Dora do
     {last_block, abi_path} =
       case :dets.lookup(:addresses, address) do
         [] -> {:error, :not_found}
-        [{_key, block, abi_path}] -> {:ok, block, abi_path}
+        [{_key, block, abi_path, _status}] -> {:ok, block, abi_path}
       end
       |> case do
         {:error, :not_found} -> Contracts.contract_information(address)

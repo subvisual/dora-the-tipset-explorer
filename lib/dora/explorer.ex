@@ -72,7 +72,13 @@ defmodule Dora.Explorer do
     EventDispatcher.dispatch(state.address, decoded_event, message)
   end
 
-  defp update_last_block_known(state, []), do: state
+  defp update_last_block_known(state, []) do
+    Dora.Contracts.update_contract(state.address, %{
+      last_run: DateTime.utc_now()
+    })
+
+    state
+  end
 
   defp update_last_block_known(state, events) do
     last_block =
