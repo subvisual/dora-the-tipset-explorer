@@ -28,7 +28,7 @@ defmodule DoraWeb.MetamaskButtonLive do
         >
           <.input type="hidden" name="public_address" value={@current_wallet_address} />
           <.input type="hidden" name="signature" value={@signature} />
-          <.button type="submit" class={button_css()}>
+          <.button class={button_css()}>
             <span class="w-6"><.metamask_icon /></span> Sign in
           </.button>
         </.form>
