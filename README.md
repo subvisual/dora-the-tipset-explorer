@@ -6,30 +6,30 @@ Indexing of blockchain events is crucial for dApps as it enables quick and effic
 
 This project, **Dora, The TipsetExplorer**, is a [The Graph](https://thegraph.com/en/)-like event indexer, for the FEVM, where you specify Handlers (files writen/generated in Elixir that instruct `Dora` on how to deal with events) by Smart Contract or **default** Handlers for a specific Event. 
 
-At the moment there is nothing similar to this Project working on FEVM (Hyperspace, at least), so we decided to build our own.
+At the moment there is nothing similar to this Project working on FEVM (Hyperspace, at least), so we decided to build our own. This project was part of the [Space Warp hackathon by ETHGlobal](https://ethglobal.com/events/spacewarp).
 
-This project is part of the [Space Warp hackathon by ETHGlobal](https://ethglobal.com/events/spacewarp).
+## Example
+Example deployed at: [dora-the-tipset-explorer.fly.dev/](https://dora-the-tipset-explorer.fly.dev/)
 
-Example deployed at [dora-the-tipset-explorer.fly.dev/](https://dora-the-tipset-explorer.fly.dev/)
+It comes with an **API Playground** for you to lool around, and see how you can make requests, if you end up deploying your own version.
 
-You can query by replacing `:type` with an indexed Event/Projection type:
- - `events` at [dora-the-tipset-explorer.fly.dev/api/events/:type](https://dora-the-tipset-explorer.fly.dev/api/events/:type) and add any query params to filter. (example type: `new_broker_deployed`)
- - `projections` at [dora-the-tipset-explorer.fly.dev/api/projections/:type](https://dora-the-tipset-explorer.fly.dev/api/projections/:type) and add any query params to filter. (example type: `loan`)
- 
-### Features
+<p align="center">
+  <img alt="Dora Playground example, with a signed-in user" src="images/playground.png" />
+</p>
+
+## Features
 
 This Indexer has some interesting built-in features that are very helpful for maintaining these types of services.
 
-- Index Smart Contracts **on demand**;
-- Each Smart Contract has **its separate Process** to handle Indexing.
+- Start/Pause/Stop indexing Smart Contracts **on demand**;
 - Fault tolerance at the Process/in-memory level. If a process responsible for Indexing a specific smart contract, crashes, **there is a Supervisor Process that will try to re-spawn it** and continue where it left off.
 - Fault tolerance in case of a full crash of `Dora`. It takes advantage of a `{key, value}` store in a local file. **If the whole app crashes, when restarting the server, previously running processes for each Smart Contract, will be started and resume at the same Event they were before**. This ensures that no Events are lost during the downtime. If this file also fails us, `Dora`, will look for this information in its local Database. This way, it has 3 different mechanisms for recovery.
-- Easily **Pause and Stop indexing a Smart Contract**.
 - **Plug and Play Event Handlers** by Smart Contract address or Default Handlers for an Event type.
 - **Automatic code generation** for new Handlers.
 - **Abstracted Event Data/Arguments decoding**. Delt by each `Explorer` process.
 - **Abstracted Database tables** under `Events` and `Projections`, that enable you to store full `Maps` and query by their values.
 - Simple to use API, with just two main endpoints (`api/events/:type` and `api/projections/:type`).
+- Built-in **API Playground**, and Sign-in with Metamask for configured wallets.
 
 <p align="center">
   <img alt="Base Structure for Dora" src="images/dora-processes.png" />
