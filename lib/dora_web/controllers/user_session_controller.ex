@@ -9,7 +9,9 @@ defmodule DoraWeb.UserSessionController do
   end
 
   defp create(conn, %{"public_address" => eth_address, "signature" => signature} = params, info) do
-    if user = Accounts.verify_message_signature(eth_address, signature) do
+    user = Accounts.verify_message_signature(eth_address, signature)
+
+    if user do
       conn
       |> put_flash(:info, info)
       |> UserAuth.log_in_user(user, params)
