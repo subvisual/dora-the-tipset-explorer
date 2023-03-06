@@ -867,6 +867,10 @@ select {
   margin-top: 4rem;
 }
 
+.mt-4 {
+  margin-top: 1rem;
+}
+
 .block {
   display: block;
 }
@@ -949,6 +953,10 @@ select {
 
 .w-6 {
   width: 1.5rem;
+}
+
+.w-3\/6 {
+  width: 50%;
 }
 
 .w-10 {
@@ -1300,12 +1308,12 @@ select {
   padding-bottom: 4rem;
 }
 
-.pt-8 {
-  padding-top: 2rem;
-}
-
 .pt-4 {
   padding-top: 1rem;
+}
+
+.pt-8 {
+  padding-top: 2rem;
 }
 
 .pt-2 {
@@ -1577,6 +1585,11 @@ select {
   background-color: rgb(228 228 231 / 0.8);
 }
 
+.hover\:bg-zinc-100:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(244 244 245 / var(--tw-bg-opacity));
+}
+
 .hover\:text-zinc-700:hover {
   --tw-text-opacity: 1;
   color: rgb(63 63 70 / var(--tw-text-opacity));
@@ -1635,6 +1648,24 @@ select {
 }
 
 .active\:text-zinc-900\/70:active {
+  color: rgb(24 24 27 / 0.7);
+}
+
+.active\:text-green-500:active {
+  --tw-text-opacity: 1;
+  color: rgb(34 197 94 / var(--tw-text-opacity));
+}
+
+.active\:text-brand:active {
+  --tw-text-opacity: 1;
+  color: rgb(253 79 0 / var(--tw-text-opacity));
+}
+
+.enabled\:hover\:bg-zinc-200\/80:hover:enabled {
+  background-color: rgb(228 228 231 / 0.8);
+}
+
+.enabled\:active\:text-zinc-900\/70:active:enabled {
   color: rgb(24 24 27 / 0.7);
 }
 

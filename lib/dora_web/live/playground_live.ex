@@ -14,10 +14,21 @@ defmodule DoraWeb.PlaygroundLive do
 
     contracts = Contracts.list_contracts()
 
+    available_abis =
+      if socket.assigns.current_user do
+        Path.wildcard("priv/abis/*.json")
+        |> Enum.map(&{List.last(String.split(&1, "/")), &1})
+      else
+        []
+      end
+
     {:ok,
      assign(socket,
+       current_user: socket.assigns.current_user,
        available_types: event_types,
+       available_abis: available_abis,
        contracts: contracts,
+       loading_contracts: [],
        model_type: "events",
        type: nil,
        filters: [],
@@ -38,7 +49,8 @@ defmodule DoraWeb.PlaygroundLive do
     {:noreply,
      assign(socket,
        available_types: event_types,
-       contracts: contracts
+       contracts: contracts,
+       loading_contracts: []
      )}
   end
 
@@ -53,6 +65,51 @@ defmodule DoraWeb.PlaygroundLive do
         ]
 
     {:noreply, assign(socket, filters: new_filters)}
+  end
+
+  def handle_event("play", %{"address" => address}, socket) do
+    if not is_nil(socket.assigns.current_user) do
+      Dora.start_explorer_instance(address)
+    end
+
+    {:noreply, assign(socket, loading_contracts: [address | socket.assigns.loading_contracts])}
+  end
+
+  def handle_event("pause", %{"address" => address}, socket) do
+    if not is_nil(socket.assigns.current_user) do
+      Dora.pause_explorer_instance(address)
+    end
+
+    {:noreply, assign(socket, loading_contracts: [address | socket.assigns.loading_contracts])}
+  end
+
+  def handle_event("start-new-contract", %{"abi_path" => abi, "address" => address}, socket)
+      when abi != "" and address != "" do
+    socket =
+      if not is_nil(socket.assigns.current_user) do
+        Dora.start_explorer_instance(address, abi)
+
+        put_flash(
+          socket,
+          :info,
+          "Indexing Submitted! The new contract should appear in the list, shortly."
+        )
+      else
+        put_flash(socket, :error, "Not signed in!")
+      end
+
+    {:noreply, socket}
+  end
+
+  def handle_event("start-new-contract", _value, socket) do
+    socket =
+      if not is_nil(socket.assigns.current_user) do
+        put_flash(socket, :error, "Invalid arguments!")
+      else
+        put_flash(socket, :error, "Not signed in!")
+      end
+
+    {:noreply, socket}
   end
 
   def handle_event("remove-filter", %{"index" => index}, socket) do
