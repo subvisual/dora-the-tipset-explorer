@@ -11,7 +11,7 @@ At the moment there is nothing similar to this Project working on FEVM (Hyperspa
 ## Example
 Example deployed at: [dora-the-tipset-explorer.fly.dev/](https://dora-the-tipset-explorer.fly.dev/)
 
-It comes with an **API Playground** for you to lool around, and see how you can make requests, if you end up deploying your own version.
+It comes with an **API Playground** for you to fool around, and see how you can make requests, if you end up deploying your own version.
 
 <p align="center">
   <img alt="Dora Playground example, with a signed-in user" src="images/playground.png" />
