@@ -6,7 +6,7 @@ defmodule Dora.Explorer.HttpRpc do
 
   alias Dora.Utils
 
-  @maximum_blocks_from_the_past 60_400
+  @maximum_blocks_from_the_past 2_500
 
   plug(Tesla.Middleware.BaseUrl, get_rpc_endpoint())
   plug(Tesla.Middleware.Headers, [{"accept", "*/*"}])
@@ -16,7 +16,7 @@ defmodule Dora.Explorer.HttpRpc do
     body = %{
       id: UUID.uuid4(),
       jsonrpc: "2.0",
-      method: "Filecoin.EthBlockNumber",
+      method: "eth_blockNumber",
       params: []
     }
 
@@ -25,17 +25,19 @@ defmodule Dora.Explorer.HttpRpc do
   end
 
   def events(address, from_block) do
+    latest_block = latest_block()
+
     {from, to} =
-      if latest_block() - @maximum_blocks_from_the_past > from_block do
+      if latest_block - @maximum_blocks_from_the_past > from_block do
         {from_block, from_block + @maximum_blocks_from_the_past}
       else
-        {from_block, "latest"}
+        {from_block, latest_block}
       end
 
     body = %{
       id: 0,
       jsonrpc: "2.0",
-      method: "Filecoin.EthGetLogs",
+      method: "eth_getLogs",
       params: [
         %{
           address: [address],
@@ -45,8 +47,11 @@ defmodule Dora.Explorer.HttpRpc do
       ]
     }
 
-    post("/", body)
-    |> handle_events(address, from_block)
+    events =
+      post("/", body)
+      |> handle_events(address, from_block)
+
+    {Utils.int_to_hex(to), events}
   end
 
   defp handle_block_number({:ok, %Tesla.Env{status: 200, body: body}}) do

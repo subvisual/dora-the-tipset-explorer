@@ -42,16 +42,17 @@ defmodule Dora.Explorer do
 
   @impl true
   def handle_info(:request_logs, state) do
-    events =
-      HttpRpc.events(state.address, state.last_block)
-      |> Enum.filter(&(not &1["removed"]))
-      |> tap(&Logger.info("Detected #{length(&1)} new Events for: #{state.address}"))
-      |> Enum.sort_by(&Utils.hex_to_int(&1["blockNumber"]))
+    {to_block, events} = HttpRpc.events(state.address, state.last_block)
+
+    events
+    |> Enum.filter(&(not &1["removed"]))
+    |> tap(&Logger.info("Detected #{length(&1)} new Events for: #{state.address}"))
+    |> Enum.sort_by(&Utils.hex_to_int(&1["blockNumber"]))
 
     Enum.each(events, &handle_event(state, &1))
     Process.send_after(self(), :request_logs, @refresh_rate)
 
-    new_state = update_last_block_known(state, events)
+    new_state = update_last_block_known(state, to_block)
 
     {:noreply, new_state}
   end
@@ -72,18 +73,8 @@ defmodule Dora.Explorer do
     EventDispatcher.dispatch(state.address, decoded_event, message)
   end
 
-  defp update_last_block_known(state, []) do
-    Dora.Contracts.update_contract(state.address, %{
-      last_run: DateTime.utc_now()
-    })
-
-    state
-  end
-
-  defp update_last_block_known(state, events) do
-    last_block =
-      List.last(events)["blockNumber"]
-      |> Utils.hex_to_int()
+  defp update_last_block_known(state, to_block) do
+    last_block = Utils.hex_to_int(to_block)
 
     Dora.store_contract_information(
       state.address,
