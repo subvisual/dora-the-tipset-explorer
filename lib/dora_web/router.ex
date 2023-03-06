@@ -1,6 +1,8 @@
 defmodule DoraWeb.Router do
   use DoraWeb, :router
 
+  import DoraWeb.UserAuth
+
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -8,6 +10,7 @@ defmodule DoraWeb.Router do
     plug :put_root_layout, {DoraWeb.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug :fetch_current_user
   end
 
   pipeline :api do
@@ -17,7 +20,10 @@ defmodule DoraWeb.Router do
   scope "/", DoraWeb do
     pipe_through :browser
 
-    live "/", PlaygroundLive
+    live_session :current_user,
+      on_mount: [{DoraWeb.UserAuth, :mount_current_user}] do
+      live "/", PlaygroundLive
+    end
 
     scope "/api" do
       pipe_through :api
@@ -41,5 +47,19 @@ defmodule DoraWeb.Router do
 
       live_dashboard "/dashboard", metrics: DoraWeb.Telemetry
     end
+  end
+
+  ## Authentication routes
+
+  scope "/", DoraWeb do
+    pipe_through [:browser, :redirect_if_user_is_authenticated]
+
+    post "/users/log_in", UserSessionController, :create
+  end
+
+  scope "/", DoraWeb do
+    pipe_through [:browser]
+
+    delete "/users/log_out", UserSessionController, :delete
   end
 end

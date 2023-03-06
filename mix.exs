@@ -28,6 +28,7 @@ defmodule Dora.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:bcrypt_elixir, "~> 3.0"},
       {:tesla, "~> 1.4"},
       {:hackney, "~> 1.17"},
       {:jason, "~> 1.2"},
@@ -40,6 +41,7 @@ defmodule Dora.MixProject do
       {:phoenix_live_dashboard, "~> 0.7.2"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:phoenix_live_view, "~> 0.18.16"},
+      {:phoenix_html, "~> 3.3"},
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 1.0"},
       {:esbuild, "~> 0.5", runtime: Mix.env() == :dev},
@@ -47,7 +49,8 @@ defmodule Dora.MixProject do
       {:uuid, "~> 1.1"},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:heroicons, "~> 0.5"},
-      {:gettext, "~> 0.20"}
+      {:gettext, "~> 0.20"},
+      {:ex_web3_ec_recover, "~> 0.3.0"}
     ]
   end
 
