@@ -2,21 +2,11 @@ import {ethers} from "../../vendor/ethers"
 
 const web3Provider = new ethers.providers.Web3Provider(window.ethereum)
 
-function init() {
-    // Check that the web page is run in a secure context,
-    // as otherwise MetaMask won't be available
-    if (location.hostname !== "localhost" && location.protocol !== 'https:') {
-        console.log("FAILING AT HTTPS")
-    }
-}
-
 export const Metamask = {
     mounted() {
         let signer = web3Provider.getSigner()
 
         window.addEventListener('load', async () => {
-            init();
-            let address
             web3Provider.listAccounts().then((accounts) => {
                 if (accounts.length > 0) {
                     signer = web3Provider.getSigner();
