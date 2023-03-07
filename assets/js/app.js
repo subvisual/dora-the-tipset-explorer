@@ -41,8 +41,6 @@ window.addEventListener("phx:page-loading-start", _info => topbar.show(300))
 window.addEventListener("phx:page-loading-stop", _info => topbar.hide())
 
 window.addEventListener("dora:clipcopy", (event) => {
-  console.log(event)
-
   if ("clipboard" in navigator) {
     const text = event.target.textContent.trim();
     navigator.clipboard.writeText(text);
