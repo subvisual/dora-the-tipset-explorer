@@ -85,6 +85,6 @@ defmodule DoraWeb.MetamaskButtonLive do
   end
 
   defp button_css do
-    "w-full flex items-center gap-2 justify-center py-2 px-4 text-brand bg-zinc-100 hover:bg-zinc-200/80 active:text-zinc-900/70"
+    "w-full flex items-center gap-2 justify-center py-2 px-4 text-orange bg-zinc-100 hover:bg-zinc-200/80 active:text-zinc-900/70"
   end
 end

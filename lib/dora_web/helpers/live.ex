@@ -12,7 +12,7 @@ defmodule DoraWeb.Helpers.Live do
     if contract.status == :running do
       "bg-green-100 text-green-500"
     else
-      "bg-brand/5 text-brand"
+      "bg-orange/5 text-orange"
     end
   end
 

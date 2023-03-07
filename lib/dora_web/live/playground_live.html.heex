@@ -42,7 +42,7 @@
           phx-value-address={contract.address}
           type="button"
           disabled={Enum.member?(@loading_contracts, contract.address)}
-          class="text-brand bg-zinc-100 hover:bg-zinc-100 active:text-brand enabled:hover:bg-zinc-200/80 enabled:active:text-zinc-900/70"
+          class="text-orange bg-zinc-100 hover:bg-zinc-100 active:text-orange enabled:hover:bg-zinc-200/80 enabled:active:text-zinc-900/70"
         >
           <%= if Enum.member?(@loading_contracts, contract.address) do %>
             <Heroicons.arrow_path class="h-4 w-4 animate-spin" />
@@ -149,7 +149,7 @@
       </div>
     </.button>
 
-    <div class="flex flex-col rounded-md border-2 border-gray-300 px-4 w-full bg-slate-100 shadow-sm truncate">
+    <div class="flex flex-col rounded-md border-2 border-dark-gray px-4 w-full bg-zinc-100 shadow-sm truncate">
       <p class="text-m font-semibold leading-6 text-zinc-800">Try it at:</p>
       <a
         class="underline"
@@ -166,7 +166,7 @@
 <div class="pt-16">
   <h2 class="font-bold text-2xl">Result</h2>
 
-  <div class="w-full rounded-md border-2 border-gray-300 shadow-sm bg-slate-100 h-96 whitespace-pre-wrap text-xs overflow-auto px-4">
+  <div class="w-full rounded-md border-2 border-dark-gray shadow-sm bg-zinc-100 h-96 whitespace-pre-wrap text-xs overflow-auto px-4">
     <%= @results %>
   </div>
 </div>

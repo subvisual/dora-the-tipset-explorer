@@ -963,8 +963,8 @@ select {
   width: 2.5rem;
 }
 
-.w-8 {
-  width: 2rem;
+.w-12 {
+  width: 3rem;
 }
 
 .max-w-3xl {
@@ -1196,7 +1196,7 @@ select {
   background-color: rgb(220 252 231 / var(--tw-bg-opacity));
 }
 
-.bg-brand\/5 {
+.bg-orange\/5 {
   background-color: rgb(253 79 0 / 0.05);
 }
 
@@ -1205,9 +1205,14 @@ select {
   background-color: rgb(244 244 245 / var(--tw-bg-opacity));
 }
 
-.bg-slate-100 {
+.bg-black {
   --tw-bg-opacity: 1;
-  background-color: rgb(241 245 249 / var(--tw-bg-opacity));
+  background-color: rgb(15 19 20 / var(--tw-bg-opacity));
+}
+
+.bg-brand {
+  --tw-bg-opacity: 1;
+  background-color: rgb(254 215 102 / var(--tw-bg-opacity));
 }
 
 .fill-cyan-900 {
@@ -1284,11 +1289,6 @@ select {
 .py-3 {
   padding-top: 0.75rem;
   padding-bottom: 0.75rem;
-}
-
-.py-1 {
-  padding-top: 0.25rem;
-  padding-bottom: 0.25rem;
 }
 
 .py-20 {
@@ -1447,9 +1447,14 @@ select {
   color: rgb(34 197 94 / var(--tw-text-opacity));
 }
 
-.text-brand {
+.text-orange {
   --tw-text-opacity: 1;
   color: rgb(253 79 0 / var(--tw-text-opacity));
+}
+
+.text-brand {
+  --tw-text-opacity: 1;
+  color: rgb(254 215 102 / var(--tw-text-opacity));
 }
 
 .underline {
@@ -1595,6 +1600,11 @@ select {
   color: rgb(63 63 70 / var(--tw-text-opacity));
 }
 
+.hover\:text-zinc-600:hover {
+  --tw-text-opacity: 1;
+  color: rgb(82 82 91 / var(--tw-text-opacity));
+}
+
 .hover\:opacity-40:hover {
   opacity: 0.4;
 }
@@ -1656,7 +1666,7 @@ select {
   color: rgb(34 197 94 / var(--tw-text-opacity));
 }
 
-.active\:text-brand:active {
+.active\:text-orange:active {
   --tw-text-opacity: 1;
   color: rgb(253 79 0 / var(--tw-text-opacity));
 }

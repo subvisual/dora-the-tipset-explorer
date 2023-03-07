@@ -1,6 +1,6 @@
 # Dora, the TipsetExplorer
 
-<img src="images/fox.png" width="150" />
+<img src="images/dora-logo.png" width="150" />
 
 Indexing of blockchain events is crucial for dApps as it enables quick and efficient access to relevant data stored on the blockchain, which is required for executing Smart Contracts and providing a seamless user experience. Without indexing, the process of searching and retrieving data from the blockchain would be slow and cumbersome, negatively impacting the functionality and usability of dApps. This way, there are services like [The Graph](https://thegraph.com/en/), that make it easy for developers to start indexing these Events, on-demand. 
 
