@@ -25,6 +25,10 @@ defmodule DoraWeb.Router do
       live "/", PlaygroundLive
     end
 
+    live_session :authenticated, on_mount: [{DoraWeb.UserAuth, :ensure_authenticated}] do
+      live "/api_management", ApiManagementLive
+    end
+
     scope "/api" do
       pipe_through :api
 
