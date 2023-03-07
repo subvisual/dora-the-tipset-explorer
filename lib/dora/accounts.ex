@@ -13,6 +13,28 @@ defmodule Dora.Accounts do
   def get_user_by_eth_address(nil), do: nil
   def get_user_by_eth_address(eth_address), do: Repo.get_by(User, eth_address: eth_address)
 
+  ## API Management
+
+  def list_user_api_tokens(user) do
+    Repo.all(UserToken.user_and_contexts_query(user, ["api"]))
+  end
+
+  def generate_user_api_token(user) do
+    {token, user_token} = UserToken.build_api_token(user)
+    Repo.insert!(user_token)
+    token
+  end
+
+  def get_user_by_api_token(token) do
+    {:ok, query} = UserToken.verify_api_token_query(token)
+    Repo.one(query)
+  end
+
+  def delete_user_api_token(token) do
+    Repo.delete_all(UserToken.token_and_context_query(token, "api"))
+    :ok
+  end
+
   ## Session
 
   def generate_user_session_token(user) do

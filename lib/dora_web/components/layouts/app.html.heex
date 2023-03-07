@@ -14,6 +14,14 @@
           <%= "Hello, #{String.slice(@current_user.eth_address, 0..8)}..." %>
         </span>
         <.link
+          href={~p"/api_management"}
+          class="text-brand px-4 py-2 text-[0.8125rem] font-semibold leading-6 active:text-zinc-900/70 hover:text-zinc-400"
+        >
+          <span class="flex gap-2 items-center justify-center">
+            API Management
+          </span>
+        </.link>
+        <.link
           href={~p"/users/log_out"}
           method="delete"
           class="rounded-lg bg-brand px-4 py-2 text-[0.8125rem] font-semibold leading-6 text-zinc-800 active:text-zinc-900/70 hover:text-zinc-600"

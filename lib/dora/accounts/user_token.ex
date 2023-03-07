@@ -7,6 +7,7 @@ defmodule Dora.Accounts.UserToken do
   @rand_size 32
 
   @session_validity_in_days 60
+  @api_token_validity_in_days 182
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -16,6 +17,34 @@ defmodule Dora.Accounts.UserToken do
     belongs_to :user, Dora.Accounts.User
 
     timestamps(updated_at: false)
+  end
+
+  def days_api_token_valid, do: @api_token_validity_in_days
+
+  def build_api_token(user) do
+    token = :crypto.strong_rand_bytes(@rand_size)
+    hashed_token = :crypto.hash(@hash_algorithm, token)
+
+    {Base.url_encode64(token, padding: false),
+     %UserToken{token: hashed_token, context: "api", user_id: user.id}}
+  end
+
+  def verify_api_token_query(token) do
+    case Base.url_decode64(token, padding: false) do
+      {:ok, decoded_token} ->
+        hashed_token = :crypto.hash(@hash_algorithm, decoded_token)
+
+        query =
+          from token in token_and_context_query(hashed_token, "api"),
+            join: user in assoc(token, :user),
+            where: token.inserted_at > ago(^@api_token_validity_in_days, "day"),
+            select: user
+
+        {:ok, query}
+
+      :error ->
+        :error
+    end
   end
 
   @doc """
