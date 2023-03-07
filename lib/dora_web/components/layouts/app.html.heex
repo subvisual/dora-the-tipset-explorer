@@ -1,36 +1,24 @@
-<header class="px-4 sm:px-6 lg:px-8">
+<header class="px-4 sm:px-6 lg:px-8 bg-black">
   <div class="flex items-center justify-between border-b border-zinc-100 py-3">
     <div class="flex items-center gap-4">
       <a href="/">
-        <img src={~p"/assets/images/fox.png"} class="w-8" />
+        <img src={~p"/assets/images/dora-logo.png"} class="w-12" />
       </a>
-      <p class="rounded-full bg-brand/5 px-2 text-[0.8125rem] font-medium leading-6 text-brand">
+      <p class="rounded-full px-2 text-sm font-semibold leading-6 text-brand">
         Dora, the TipsetExplorer
       </p>
-      <a
-        href="https://github.com/finiam/dora-the-tipset-explorer"
-        class="text-[0.8125rem] font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
-      >
-        GitHub
-      </a>
-      <a
-        href="https://dora.finiam.com"
-        class="rounded-lg bg-zinc-100 px-2 py-1 text-[0.8125rem] font-semibold leading-6 text-zinc-900 hover:bg-zinc-200/80 active:text-zinc-900/70"
-      >
-        Know More <span aria-hidden="true">&rarr;</span>
-      </a>
     </div>
     <div class="relative z-10 flex items-center gap-4 px-4 sm:px-6 lg:px-8 justify-end">
       <%= if @current_user do %>
-        <span class="text-[0.8125rem] text-zinc-900">
+        <span class="text-sm text-white">
           <%= "Hello, #{String.slice(@current_user.eth_address, 0..8)}..." %>
         </span>
         <.link
           href={~p"/users/log_out"}
           method="delete"
-          class="rounded-lg bg-zinc-100 px-2 py-1 text-[0.8125rem] font-semibold leading-6 text-zinc-900 hover:bg-zinc-200/80 active:text-zinc-900/70 hover:text-zinc-700"
+          class="rounded-lg bg-brand px-4 py-2 text-[0.8125rem] font-semibold leading-6 text-zinc-800 active:text-zinc-900/70 hover:text-zinc-600"
         >
-          <span class="flex gap-2 items-center">
+          <span class="flex gap-2 items-center justify-center">
             Log out
             <Heroicons.arrow_right_on_rectangle solid class="h-5 w-5 group-hover:opacity-70" />
           </span>
@@ -51,5 +39,15 @@
   </div>
 </main>
 <footer class="w-full text-center pb-8 text-m leading-6 text-zinc-800">
-  Developed by <a class="underline" href="https://finiam.com">@finiam</a>
+  <a href="https://dora.finiam.com" class="font-semibold leading-6 hover:text-zinc-700">
+    Know More
+  </a>
+  | Check the
+  <a
+    href="https://github.com/finiam/dora-the-tipset-explorer"
+    class="font-semibold leading-6 hover:text-zinc-700"
+  >
+    GitHub Repo
+  </a>
+  | Developed by <a class="underline" href="https://finiam.com">@finiam</a>
 </footer>

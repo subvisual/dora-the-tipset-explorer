@@ -31,7 +31,7 @@ defmodule Dora.Explorer.HttpRpc do
       if latest_block - @maximum_blocks_from_the_past > from_block do
         {from_block, from_block + @maximum_blocks_from_the_past}
       else
-        {from_block, latest_block}
+        {from_block, "latest"}
       end
 
     body = %{
@@ -51,7 +51,10 @@ defmodule Dora.Explorer.HttpRpc do
       post("/", body)
       |> handle_events(address, from_block)
 
-    {Utils.int_to_hex(to), events}
+    case to do
+      "latest" -> {Utils.int_to_hex(latest_block), events}
+      _ -> {{Utils.int_to_hex(to), events}}
+    end
   end
 
   defp handle_block_number({:ok, %Tesla.Env{status: 200, body: body}}) do
