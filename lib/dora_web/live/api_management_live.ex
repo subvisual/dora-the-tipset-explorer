@@ -1,6 +1,7 @@
 defmodule DoraWeb.ApiManagementLive do
   use DoraWeb, :live_view
 
+  alias Dora.Settings
   alias Dora.Accounts.UserToken
   alias Dora.Accounts
 
@@ -9,7 +10,8 @@ defmodule DoraWeb.ApiManagementLive do
     {:ok,
      assign(socket,
        tokens: Accounts.list_user_api_tokens(socket.assigns.current_user),
-       new_token: nil
+       new_token: nil,
+       setting: Settings.get_or_create_setting()
      )}
   end
 
@@ -17,8 +19,39 @@ defmodule DoraWeb.ApiManagementLive do
   def render(assigns) do
     ~H"""
     <div class="pb-16">
-      <h1 class="font-bold text-4xl">Your API tokens</h1>
+      <h1 class="font-bold text-4xl">API Settings</h1>
+      <div class="py-8">
+        <form phx-submit="save-settings">
+          <.input
+            type="checkbox"
+            label="Protected API"
+            name="protected_api"
+            value={@setting.protected_api}
+          />
 
+          <div class={[
+            "mt-4 sm:w-96 z-50 rounded-lg p-3 shadow-md shadow-zinc-900/5 ring-1",
+            @setting.protected_api && "bg-sky-50 text-sky-800 ring-sky-500 fill-cyan-900",
+            !@setting.protected_api &&
+              "bg-yellow-50 p-3 text-yellow-900 shadow-md ring-yellow-500 fill-yellow-900"
+          ]}>
+            <p class="flex items-center gap-1.5 text-[0.8125rem] font-semibold leading-6">
+              <Heroicons.shield_check :if={@setting.protected_api} mini class="h-4 w-4" />
+              <Heroicons.shield_exclamation :if={!@setting.protected_api} mini class="h-4 w-4" />
+              <%= protected_notice_title(@setting.protected_api) %>
+            </p>
+            <p class="mt-1 text-[0.8125rem] leading-5">
+              <%= protected_notice_description(@setting.protected_api) %>
+            </p>
+          </div>
+
+          <.button type="submit" class="mt-4 flex items-center gap-2">
+            Save <Heroicons.check class="h-5 w-5" />
+          </.button>
+        </form>
+      </div>
+
+      <h1 class="font-bold text-4xl">Your API tokens</h1>
       <.table id="tokens" rows={@tokens}>
         <:col :let={api_token} label="Token Hash">
           <%= Base.encode64(api_token.token) %>
@@ -44,7 +77,7 @@ defmodule DoraWeb.ApiManagementLive do
         <%= if @new_token do %>
           <div class={[
             "w-3/4 rounded-lg p-3 shadow-md shadow-zinc-900/5 ring-1 truncate",
-            "bg-emerald-50 text-emerald-800 ring-emerald-500 fill-cyan-900"
+            "bg-sky-50 text-sky-800 ring-sky-500 fill-cyan-900"
           ]}>
             <p class="text-[0.8125rem] font-semibold leading-6">
               This is your new token to be used for Dora API requests.
@@ -80,13 +113,20 @@ defmodule DoraWeb.ApiManagementLive do
   end
 
   @impl true
+  def handle_event("save-settings", params, socket) do
+    {:ok, setting} = Settings.update_setting(params)
+
+    {:noreply, assign(socket, setting: setting)}
+  end
+
+  @impl true
   def handle_event("create", _params, socket) do
     token = Accounts.generate_user_api_token(socket.assigns.current_user)
 
     {:noreply,
      assign(socket,
        tokens: Accounts.list_user_api_tokens(socket.assigns.current_user),
-       new_token: Base.encode16(token)
+       new_token: token
      )}
   end
 
@@ -101,6 +141,15 @@ defmodule DoraWeb.ApiManagementLive do
        tokens: Accounts.list_user_api_tokens(socket.assigns.current_user)
      )}
   end
+
+  defp protected_notice_title(false), do: "Your Dora API is not Protected!"
+  defp protected_notice_title(true), do: "Your Dora API is Protected!"
+
+  defp protected_notice_description(false),
+    do: "This means that anyone can make requests to it without any authentication."
+
+  defp protected_notice_description(true),
+    do: "This means that requests need a token, using the `Bearer` in Authorization header."
 
   defp token_valid_until(token) do
     valid_days = UserToken.days_api_token_valid()
