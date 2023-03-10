@@ -11,7 +11,7 @@ At the moment there is nothing similar to this Project working on FEVM (Hyperspa
 ## Example
 Example deployed at: [dora-the-tipset-explorer.fly.dev/](https://dora-the-tipset-explorer.fly.dev/)
 
-It comes with an **API Playground** for you to fool around, and see how you can make requests, if you end up deploying your own version.
+It comes with an **API Playground** for you to play around, and see how you can make requests, if you end up deploying your own version. It also features some signed in actions.
 
 <p align="center">
   <img alt="Dora Playground example, with a signed-in user" src="images/playground.png" />
@@ -30,6 +30,7 @@ This Indexer has some interesting built-in features that are very helpful for ma
 - **Abstracted Database tables** under `Events` and `Projections`, that enable you to store full `Maps` and query by their values.
 - Simple to use API, with just two main endpoints (`api/events/:type` and `api/projections/:type`).
 - Built-in **API Playground**, and Sign-in with Metamask for configured wallets.
+- Manage **API Authentication** when signed in the Playground.
 
 <p align="center">
   <img alt="Base Structure for Dora" src="images/dora-processes.png" />
@@ -184,12 +185,6 @@ You can think of this installer to something like `yarn create next-app`. You al
 </p>
 
 The image above tries to represent that with this approach, you'd just need to develop your own Event Handlers (that can also be automatically generated, using the `dora.gen.handler`), and custom API filters to enhance the basic ones, already packaged within `Dora`.
-
-This part is being handled in the `zdv/dora-installer` branch.
-
-### Auth mechanism
-
-To avoid being spammed with unwanted requests, there is also a plan to add some kind of authentication to HTTP requests, using an API Key, or something similar. We can also base ourselves in **The Graph**, and add a tokenized system/protocol that would enable you to query any `Dora Indexer`, paying a fee per request to the Indexer Owner, for example.
 
 ### Storing Indexed Events in Filecoin/IPFS
 
