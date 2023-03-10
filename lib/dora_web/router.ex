@@ -14,7 +14,9 @@ defmodule DoraWeb.Router do
   end
 
   pipeline :api do
-    plug(:accepts, ["json"])
+    plug :accepts, ["json"]
+    plug :fetch_api_user
+    plug :validate_api_user
   end
 
   scope "/", DoraWeb do

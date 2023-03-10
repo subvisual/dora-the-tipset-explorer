@@ -4,6 +4,7 @@ defmodule DoraWeb.UserAuth do
   import Plug.Conn
   import Phoenix.Controller
 
+  alias Dora.Settings
   alias Dora.Accounts
 
   # Make the remember me cookie valid for 60 days.
@@ -105,6 +106,42 @@ defmodule DoraWeb.UserAuth do
       else
         {nil, conn}
       end
+    end
+  end
+
+  def validate_api_user(conn, _opts) do
+    setting = Settings.get_or_create_setting()
+
+    if setting.protected_api && is_nil(Map.get(conn.assigns, :api_user)) do
+      conn
+      |> put_status(:unauthorized)
+      |> put_view(DoraWeb.ErrorJSON)
+      |> render(:"401")
+      |> halt()
+    else
+      conn
+    end
+  end
+
+  def fetch_api_user(conn, _opts) do
+    user =
+      conn
+      |> get_token()
+      |> Accounts.get_user_by_api_token()
+
+    case user do
+      nil ->
+        assign(conn, :api_user, nil)
+
+      user ->
+        assign(conn, :api_user, user)
+    end
+  end
+
+  defp get_token(conn) do
+    case get_req_header(conn, "authorization") do
+      ["Bearer " <> token] -> token
+      _ -> nil
     end
   end
 

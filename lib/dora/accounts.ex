@@ -25,6 +25,8 @@ defmodule Dora.Accounts do
     token
   end
 
+  def get_user_by_api_token(nil), do: nil
+
   def get_user_by_api_token(token) do
     {:ok, query} = UserToken.verify_api_token_query(token)
     Repo.one(query)
