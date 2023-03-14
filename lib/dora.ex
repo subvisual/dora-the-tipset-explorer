@@ -5,7 +5,7 @@ defmodule Dora do
 
   alias Dora.{Explorer, Contracts}
 
-  use DynamicSupervisor
+  use DynamicSupervisor, restart: :temporary
 
   def start_link(init_arg) do
     case DynamicSupervisor.start_link(__MODULE__, init_arg, name: __MODULE__) do

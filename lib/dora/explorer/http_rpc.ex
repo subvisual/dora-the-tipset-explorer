@@ -53,7 +53,7 @@ defmodule Dora.Explorer.HttpRpc do
 
     case to do
       "latest" -> {Utils.int_to_hex(latest_block), events}
-      _ -> {{Utils.int_to_hex(to), events}}
+      _ -> {Utils.int_to_hex(to), events}
     end
   end
 

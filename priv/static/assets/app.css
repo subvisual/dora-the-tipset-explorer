@@ -1216,6 +1216,16 @@ select {
   background-color: rgb(253 79 0 / 0.05);
 }
 
+.bg-sky-50 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(240 249 255 / var(--tw-bg-opacity));
+}
+
+.bg-yellow-50 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(254 252 232 / var(--tw-bg-opacity));
+}
+
 .bg-zinc-100 {
   --tw-bg-opacity: 1;
   background-color: rgb(244 244 245 / var(--tw-bg-opacity));
@@ -1229,16 +1239,6 @@ select {
 .bg-brand {
   --tw-bg-opacity: 1;
   background-color: rgb(254 215 102 / var(--tw-bg-opacity));
-}
-
-.bg-yellow-50 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(254 252 232 / var(--tw-bg-opacity));
-}
-
-.bg-sky-50 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(240 249 255 / var(--tw-bg-opacity));
 }
 
 .fill-cyan-900 {
@@ -1311,6 +1311,11 @@ select {
   padding-bottom: 1rem;
 }
 
+.py-8 {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
 .px-2 {
   padding-left: 0.5rem;
   padding-right: 0.5rem;
@@ -1324,11 +1329,6 @@ select {
 .py-20 {
   padding-top: 5rem;
   padding-bottom: 5rem;
-}
-
-.py-8 {
-  padding-top: 2rem;
-  padding-bottom: 2rem;
 }
 
 .pb-4 {
@@ -1492,9 +1492,9 @@ select {
   color: rgb(253 79 0 / var(--tw-text-opacity));
 }
 
-.text-brand {
+.text-sky-800 {
   --tw-text-opacity: 1;
-  color: rgb(254 215 102 / var(--tw-text-opacity));
+  color: rgb(7 89 133 / var(--tw-text-opacity));
 }
 
 .text-yellow-900 {
@@ -1502,9 +1502,9 @@ select {
   color: rgb(113 63 18 / var(--tw-text-opacity));
 }
 
-.text-sky-800 {
+.text-brand {
   --tw-text-opacity: 1;
-  color: rgb(7 89 133 / var(--tw-text-opacity));
+  color: rgb(254 215 102 / var(--tw-text-opacity));
 }
 
 .underline {
@@ -1580,14 +1580,14 @@ select {
   --tw-ring-color: rgb(244 63 94 / var(--tw-ring-opacity));
 }
 
-.ring-yellow-500 {
-  --tw-ring-opacity: 1;
-  --tw-ring-color: rgb(234 179 8 / var(--tw-ring-opacity));
-}
-
 .ring-sky-500 {
   --tw-ring-opacity: 1;
   --tw-ring-color: rgb(14 165 233 / var(--tw-ring-opacity));
+}
+
+.ring-yellow-500 {
+  --tw-ring-opacity: 1;
+  --tw-ring-color: rgb(234 179 8 / var(--tw-ring-opacity));
 }
 
 .filter {
