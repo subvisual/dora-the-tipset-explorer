@@ -1,4 +1,10 @@
 defmodule DoraWeb.Helpers.Live do
+  def is_dora_stopped? do
+    Dora
+    |> Process.whereis()
+    |> is_nil()
+  end
+
   def map_to_query_string(filters) do
     query =
       filters

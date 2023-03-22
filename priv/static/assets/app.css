@@ -915,6 +915,10 @@ select {
   height: 24rem;
 }
 
+.h-6 {
+  height: 1.5rem;
+}
+
 .min-h-full {
   min-height: 100%;
 }
@@ -1505,6 +1509,16 @@ select {
 .text-brand {
   --tw-text-opacity: 1;
   color: rgb(254 215 102 / var(--tw-text-opacity));
+}
+
+.text-rose-100 {
+  --tw-text-opacity: 1;
+  color: rgb(255 228 230 / var(--tw-text-opacity));
+}
+
+.text-rose-500 {
+  --tw-text-opacity: 1;
+  color: rgb(244 63 94 / var(--tw-text-opacity));
 }
 
 .underline {
