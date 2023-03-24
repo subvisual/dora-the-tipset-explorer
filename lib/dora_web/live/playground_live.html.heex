@@ -1,5 +1,15 @@
 <div class="pb-16">
-  <h1 class="font-bold text-4xl">Indexed Contracts</h1>
+
+  <div class="flex flex-row items-center gap-4">
+    <h1 class="font-bold text-4xl">Indexed Contracts</h1>
+
+    <%= if is_dora_stopped?() do %>
+      <Heroicons.bolt_slash solid class="h-6 w-6 text-rose-500" />
+      <span class="text-basic text-rose-500">Dora is stopped!</span>
+    <% else %>
+      <Heroicons.bolt solid class="h-6 w-6 text-brand" />
+    <% end %>
+  </div>
 
   <.table id="contracts" rows={@contracts}>
     <:col :let={contract} label="Address">
