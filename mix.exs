@@ -50,7 +50,7 @@ defmodule Dora.MixProject do
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:heroicons, "~> 0.5"},
       {:gettext, "~> 0.20"},
-      {:ex_web3_ec_recover, "~> 0.3.0"}
+      {:ex_web3_ec_recover, "~> 0.4.0"}
     ]
   end
 
