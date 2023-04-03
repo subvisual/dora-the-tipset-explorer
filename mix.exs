@@ -29,7 +29,7 @@ defmodule Dora.MixProject do
   defp deps do
     [
       {:bcrypt_elixir, "~> 3.0"},
-      {:tesla, "~> 1.5.1"},
+      {:tesla, "~> 1.6.0"},
       {:hackney, "~> 1.17"},
       {:jason, "~> 1.2"},
       {:ecto_sql, "~> 3.6"},
